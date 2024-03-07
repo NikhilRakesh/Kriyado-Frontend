@@ -1,0 +1,27 @@
+import React from 'react'
+import VendorProfileLeft from './VendorProfileLeft'
+import VendorProfileRight from './VendorProfileRight'
+import { Outlet } from 'react-router-dom'
+
+const VentorProfile = () => {
+    return (
+        <div>
+            <div className='flex justify-center w-3/12 absolute mt-[-2rem] left-[9rem]  md:left-5'>
+                <div className='shadow-md  bg-white rounded-full h-20 w-20 flex items-center justify-center p-1 '>
+                    <img src="https://imgs.search.brave.com/_TUY9FhuARvZX0FHCYwnarcmxgLWI4T0BqUNQD-UGuY/rs:fit:500:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9jL2NhL1dh/bG1hcnRfbG9nby5z/dmcvNjQwcHgtV2Fs/bWFydF9sb2dvLnN2/Zy5wbmc" alt="" />
+                </div>
+            </div>
+            <div className='  m-6 p-2 pt-5 border-black md:flex gap-6'>
+
+                <div className='md:w-3/12 rounded-md bg-white shadow-lg'>
+                    <VendorProfileLeft />
+                </div>
+                <div className='md:w-9/12 rounded-md bg-white shadow-lg'>
+                    <Outlet />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default VentorProfile
