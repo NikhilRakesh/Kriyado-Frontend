@@ -1,8 +1,34 @@
-import React from 'react'
-import Dropdown from '../admin/Dropdown'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import MorePartnersDetails from './MorePartnersDetails'
+import { get_api } from '../../utils/api';
+import { useSelector } from 'react-redux';
+import ServiceProvider from './ServiceProvider';
 
 const MorePartners = () => {
+
+    const { id } = useParams();
+    const user = useSelector(state => state.auth.user);
+
+    const [branchDetails, setbranchDetails] = useState(null)
+
+    const FetchPartnersData = async () => {
+        try {
+            const response = await get_api(user?.token).get(`/shop/branches/customer/${id}/`);
+            if (response.status === 200) {
+                setbranchDetails(response.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        FetchPartnersData()
+    }, [])
+
+
+
     return (
         <div className='' >
             <div className='md:absolute md:top-0 md:right-0 md:mt-[12rem] '>
@@ -17,7 +43,7 @@ const MorePartners = () => {
                     </div>
                 </div>
             </div>
-            <div className='bg-gray-50 rounded-lg m-6 p-6 shadow-lg md:flex  gap-3'>
+            <div className='bg-white rounded-lg m-6 p-6 shadow-lg md:flex  gap-3'>
                 <div className='md:w-10/12 '>
 
                     <div className='flex items-center'>
@@ -27,14 +53,15 @@ const MorePartners = () => {
                     </div>
 
                     <div className='mt-5'>
-                        <MorePartnersDetails />
+                        <MorePartnersDetails branchDetails={branchDetails} />
                     </div>
 
                 </div>
-                <div className='md:w-4/12 border shadow-md'>
-                    <div className='  rounded-sm'>
+                <div className='md:w-4/12 mt-11 '>
+                    {branchDetails && <ServiceProvider branchDetails={branchDetails} />}
+                    {/* <div className='  rounded-sm'>
                         <img src="/ad-area@2x.png" alt="" />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

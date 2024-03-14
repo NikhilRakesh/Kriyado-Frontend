@@ -86,7 +86,7 @@ const UserPartners = () => {
 
     const handleSearchChange = (e) => {
         setValue(e.target.value);
-        setseletedCategories(''); 
+        setseletedCategories('');
     };
 
 
@@ -99,7 +99,7 @@ const UserPartners = () => {
                             <h1 className='text-xs'>Active</h1>
                         </div>
                         <div className='bg-black rounded-full h-full p-1 ml-3 w-full  '>
-                            <h1 className='text-white text-xs p-1'>Kriyado Lifestyle + Services</h1>   
+                            <h1 className='text-white text-xs p-1'>Kriyado Lifestyle + Services</h1>
                         </div>
                     </div>
                 </div>

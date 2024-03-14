@@ -36,6 +36,8 @@ import VendorDeclaration from './components/ventors/VendorDeclaration'
 import VendorEmailSubmission from './components/ventors/VendorEmailSubmission'
 import ProtectedRoute from './components/RouteProtectors/AuthProtector'
 import { useSelector } from 'react-redux'
+import UsersNotification from './components/users/UsersNotification'
+import Pricing from './components/users/Pricing'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -43,12 +45,14 @@ function App() {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const AuthType = useSelector(state => state.auth.user);
 
+  const isAdminAuthenticated = useSelector(state => state.adminAuth.isAdminAuthenticated);
+  const adminUser = useSelector(state => state.adminAuth.adminUser);
 
   return (
     <>
       <Routes>
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin-home" element={isAuthenticated && AuthType.type === 'admin' ? (<AdminHome />) : (<Navigate to="/login" replace />)}>
+        <Route path="/admin-home" element={isAdminAuthenticated && adminUser?.type === 'admin' ? (<AdminHome />) : (<Navigate to="/login" replace />)}>
           <Route path="" element={<AdminGraph />} />
           <Route path="add-package" element={<AdminAddPackage />} />
           <Route path="add-Catogries" element={<AdminAddCatogries />} />
@@ -70,7 +74,9 @@ function App() {
         <Route path="/" element={isAuthenticated && AuthType.type === 'user' ? (<UserHome />) : (<Navigate to="/login" replace />)} >
           <Route path="" element={<UserProfile />} />
           <Route path="Partners" element={<UserPartners />} />
-          <Route path="MorePartners" element={<MorePartners />} />
+          <Route path="MorePartners/:id" element={<MorePartners />} />
+          <Route path="Users-Notification" element={<UsersNotification />} />
+          <Route path="Pricing" element={<Pricing />} />
         </Route>
         <Route path="/login" element={<UserLogin />} />
         <Route path="/Vendor-register" element={<VendorRegister />} >

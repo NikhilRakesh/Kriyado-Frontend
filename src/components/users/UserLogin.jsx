@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from "../../utils/api";
 import { FaCheck } from 'react-icons/fa';
+import { adminLogin } from '../../Reducer/adminAuthReducer';
 
 
 const UserLogin = () => {
@@ -29,16 +30,17 @@ const UserLogin = () => {
             try {
                 const response = await api.post('/user/login/', { username: email, password });
                 if (response.status === 200) {
-                    dispatch(loginAction(response.data));
                     if (response.data.type === 'user') {
+                        dispatch(loginAction(response.data));
                         navigate('/')
                     } else if (response.data.type === 'admin') {
+                        dispatch(adminLogin(response.data));
                         navigate('/admin-home')
                     } else if (response.data.type === 'vendor') {
                         navigate('/vendors')
                     }
                 }
-            } catch (error) {
+            } catch (error) {    
                 const errorMessages = getErrorMessage(error)
                 const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors');
                 if (generalErrors) {

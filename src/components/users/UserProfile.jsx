@@ -28,6 +28,7 @@ const UserProfile = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
 
     const user = useSelector(state => state.auth.user);
+    const isDataEmpty = Object.values(Data).every(value => value === '');
 
     useEffect(() => {
 
@@ -48,7 +49,7 @@ const UserProfile = () => {
         }))
 
         loginUser();
-    }, [])
+    }, [isDataEmpty])
 
     const onClose = () => {
         setisOpen(false)
@@ -62,8 +63,7 @@ const UserProfile = () => {
         setIsModalOpen(false);
     };
 
-
-    return Data === null ? <SkeltonLoading /> : (
+    return isDataEmpty ? <SkeltonLoading /> : (
         <div>
             <div className='md:absolute md:top-0 md:right-0 md:mt-28 '>
                 <div className='relative'>
