@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { getErrorMessage } from '../../utils/Validation';
 import { get_api } from '../../utils/api';
 
-const PackageViewModal = ({ packageData, onClose }) => {
+const PackageViewModal = ({ packageData, onClose, reRender }) => {
+    if (!packageData || Object.keys(packageData).length === 0) {
+        return null; 
+    }
     const { categories, created_date, discription, id, is_active, name, type, type_p } = packageData;
     const [isEditMode, setIsEditMode] = useState(false);
     const [newType, setNewType] = useState({
@@ -12,6 +15,7 @@ const PackageViewModal = ({ packageData, onClose }) => {
         discount_price: '',
         duration_days: '',
         package_detail: id,
+        option_id: '',
     });
     const [packageWithTypes, setPackageWithTypes] = useState(packageData);
     const user = useSelector(state => state.adminAuth.adminUser)
@@ -33,19 +37,20 @@ const PackageViewModal = ({ packageData, onClose }) => {
 
         try {
             const response = await get_api(user?.token).post('/shop/package_option/create/', newType);
-            console.log(response);
             if (response.status === 201) {
                 toast.success('Created package type')
-                const updatedTypes = [...packageWithTypes.type_p, newType];
+                const updatedTypes = [...packageWithTypes.type_p, response.data];
                 setPackageWithTypes({
                     ...packageWithTypes,
                     type_p: updatedTypes
                 });
+                reRender()
             }
             setNewType({
                 actual_price: '',
                 discount_price: '',
-                duration_days: ''
+                duration_days: '',
+                option_id: ''
             });
             setIsEditMode(false);
         } catch (error) {
@@ -65,33 +70,65 @@ const PackageViewModal = ({ packageData, onClose }) => {
     };
 
     const handleEditType = (index) => {
-        const clickedType = type_p[index];
+        const clickedType = packageWithTypes.type_p[index];
         setNewType({
             actual_price: clickedType.actual_price,
             discount_price: clickedType.discount_price,
-            duration_days: clickedType.duration_days
+            duration_days: clickedType.duration_days,
+            package_detail: id,
+            option_id: clickedType.id
         });
         setIsEditMode(true);
     };
 
-    const handleUpdateType = async (id) => {
+    const handleUpdateType = async () => {
         try {
-            const response = await get_api(user?.token).post(`/shop/package-option/${id}/update/`, newType);
-            console.log(response);
-            if (response.status === 201) {
-                toast.success('Created package type')
+            const response = await get_api(user?.token).put(`/shop/package_option/${newType.option_id}/update/`, newType);
+            if (response.status === 200) {
+                toast.success('updated package successfuly')
                 const updatedTypes = [...packageWithTypes.type_p, newType];
                 setPackageWithTypes({
                     ...packageWithTypes,
                     type_p: updatedTypes
                 });
+                reRender()
             }
             setNewType({
                 actual_price: '',
                 discount_price: '',
-                duration_days: ''
+                duration_days: '',
+                option_id: ''
             });
             setIsEditMode(false);
+        } catch (error) {
+            console.error('Fetching handleAddType failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors' || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                console.log('', newErrors);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+
+    const deleteType = async (id) => {
+        try {
+            const response = await get_api(user?.token).delete(`/shop/package_option/${id}/delete/`);
+            console.log('response', response);
+            if (response.status === 204) {
+                toast.success('Package deleted successfuly')
+                // const updatedTypes = [...packageWithTypes.type_p, newType];
+                // setPackageWithTypes({
+                //     ...packageWithTypes,
+                //     type_p: updatedTypes
+                // });
+                reRender()
+            }
         } catch (error) {
             console.error('Fetching handleAddType failed:', error);
             const errorMessages = getErrorMessage(error)
@@ -200,9 +237,15 @@ const PackageViewModal = ({ packageData, onClose }) => {
                                                 <div className=' border-gray-300 p-1 px-4 border-r cursor-pointer ' onClick={() => { handleEditType(index) }}>
                                                     <img src="/edit.png" alt="" className='w-3 ' />
                                                 </div>
-                                                <div className='p-1 px-4 cursor-pointer'>
-                                                    <img src="/delete (3).png" alt="pic-del" className='w-3 ' />
-                                                </div>
+                                                {typeData.is_active ?
+                                                    (<div className='p-1 px-4 cursor-pointer' onClick={() => { deleteType(typeData.id) }}>
+                                                        <img src="/delete (3).png" alt="pic-del" className='w-3 ' />
+                                                    </div>)
+                                                    :
+                                                    (<div className='p-1 px-4 cursor-pointer' onClick={() => { toast.error('already deleted') }}>
+                                                        <img src="/recycle-bin.png" alt="pic-del" className='w-3 ' />
+                                                    </div>)
+                                                }
                                             </div>
                                         </div>
                                     ))}

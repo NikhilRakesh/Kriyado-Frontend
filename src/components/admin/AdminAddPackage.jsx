@@ -5,12 +5,14 @@ import { get_api } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import { getErrorMessage } from '../../utils/Validation';
 import toast, { Toaster } from 'react-hot-toast';
+import CustomModal from './CustomModal';
 
 const AdminAddPackage = () => {
 
     const [categories, setCategories] = useState([]);
     const [effect, seteffect] = useState(false);
     const [LoginError, setLoginError] = useState([]);
+    const [searchkey, setsearchkey] = useState('');
     const [packages, setPackages] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
@@ -220,6 +222,38 @@ const AdminAddPackage = () => {
         seteffect(prevEffect => !prevEffect);
     }
 
+    const reset = ()=> {
+        seteffect(prevEffect => !prevEffect); 
+        setsearchkey('')
+    }
+
+    const searchPackages = async (text) => {
+        try {
+            const response = await get_api(user?.token).get(`/shop/packages/?search=${text}`);
+            if (response.status === 200) {
+                setPackages(response.data)
+            }
+        } catch (error) {
+            console.error('Fetching searchPackages failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors' || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                console.log('', newErrors);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+
+    const onchangesearch = (e) => {
+        setsearchkey(e.target.value)
+        searchPackages(e.target.value)
+    }
+
 
     return (
         <div className=' m-6 p-2 bg-gray-50 rounded-lg shadow-lg '>
@@ -230,6 +264,8 @@ const AdminAddPackage = () => {
                         type="text"
                         className="border rounded-full pl-10 pr-4 py-2 w-full outline-[#80509F]"
                         placeholder="Search package"
+                        value={searchkey}
+                        onChange={onchangesearch}
                     />
                     <svg
                         className="absolute left-3 top-2 h-5 w-5 text-gray-500 "
@@ -385,7 +421,7 @@ const AdminAddPackage = () => {
                                 <img src="  /down-arrow (1).png" alt="" className='w-4 h-4' />
                             </div>
 
-                            <div className='flex items-center justify-center w-3/12 '>
+                            <div className='flex items-center justify-center w-3/12 cursor-pointer' onClick={reset}>
                                 <img src="/undo (1).png" alt="" className='w-4 h-4' />
                                 <p className='text-sm text-red-500 font-sans p-0 m-0 font-bold'>Reset Filter</p>
 
