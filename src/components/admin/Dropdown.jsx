@@ -13,7 +13,7 @@ const Dropdown = ({ text, p, textcolor, font, data, onUpdate, textsize, bg }) =>
         <div className="relative w-full">
             <button
                 onClick={toggleDropdown}
-                className={`${bg ? bg : 'bg-gray-100 border'}  border-gray-300 w-full font-bold ${p ? `p-${p}` : 'py-2 px-4'} rounded inline-flex items-center`}
+                className={`${bg ? bg : 'bg-gray-100 border'}  border-gray-300 outline-[#80509F] w-full font-bold ${p ? `p-${p}` : 'py-2 px-4'} rounded inline-flex items-center`}
             >
                 <div className='flex items-center justify-between w-full'>
                     <p className={`${font ? `${font}` : 'font-thin'} ${textcolor ? `${textcolor}` : 'text-gray-400'} ${textsize ? `${textsize}` : 'text-sm '}`}>
@@ -34,7 +34,7 @@ const Dropdown = ({ text, p, textcolor, font, data, onUpdate, textsize, bg }) =>
                 </div>
             </button>
             {isOpen && (
-                <div className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ${data?.length !== 1 ? 'h-[200px]' : ''} overflow-scroll overflow-x-hidden customscrollbar`}>
+                <div className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ${data?.length !== 1 ? 'h-[150px]' : ''} overflow-scroll overflow-x-hidden customscrollbar`}>
                     {data && data.map((d) => (
                         <button className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100" key={d.name ? d.name : d}
                             onClick={() => {

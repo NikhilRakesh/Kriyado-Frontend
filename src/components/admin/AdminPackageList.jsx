@@ -108,7 +108,7 @@ const AdminPackageList = ({ packages, reRender }) => {
             {openModal && Object.keys(modalPackageData).length > 0 && (
                 <PackageViewModal packageData={modalPackageData} onClose={closemodal} reRender={reRender} />
             )}
-            <CustomModal isOpen={openModal2} onClose={onclose2} data={Data} />
+            {!Data ? null : <CustomModal isOpen={openModal2} onClose={onclose2} data={Data} reRender={reRender} />}
         </div>
     )
 }

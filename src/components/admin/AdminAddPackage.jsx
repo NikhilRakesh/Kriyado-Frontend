@@ -319,7 +319,7 @@ const AdminAddPackage = () => {
                                 value={formData.type}
                                 onChange={handleChange}
                                 className='border outline-[#80509F] text-sm border-gray-300 pl-2 pr-4 py-1 w-full rounded-sm bg-gray-100'
-                                name="type"
+                                 name="type"
                             >
                                 <option value="BASIC">BASIC</option>
                                 <option value="COMBO">COMBO</option>

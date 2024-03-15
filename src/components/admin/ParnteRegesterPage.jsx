@@ -377,7 +377,6 @@ const ParnteRegesterPage = () => {
                                     <p className=' text-xs text-red-500 cursor-pointer' onClick={() => handleRemoveImage(index)}>Remove</p>
                                 </div>
                             )))}
-
                             <div className='w-2/6  shadow-lg flex items-center justify-center'>
                                 <input
                                     type="file"
