@@ -5,8 +5,9 @@ import SkeltonLoading from '../ResuableComponents/SkeltonLoading';
 import api, { get_api } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import EditProfileModal from './EditProfileModal ';
-import { checkDate } from '../../utils/Validation';
+import { checkDate, getErrorMessage } from '../../utils/Validation';
 import ExpiryModal from './ExpiryModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 const UserProfile = () => {
 
@@ -34,19 +35,32 @@ const UserProfile = () => {
 
         const loginUser = async () => {
             try {
-                const response = await get_api(user?.token).get('/shop/customer/');
+                const response = await get_api(user?.token).get('/shop/customer/detail_update/user/');
                 if (response.status === 200) {
                     setData(response.data)
                 }
             } catch (error) {
                 console.error('Login failed:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
         };
 
-        setFormatedDate(new Date(Data?.expiry_date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit'
-        }))
+        const packageData = Data?.package_c?.find(pkg => pkg.is_active === true);
+        if (packageData) {
+            const { purchase_date, expiry_date } = packageData;
+            const dateObject3 = new Date(expiry_date);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            setFormatedDate(dateObject3.toLocaleDateString('en-US', options))
+        }
 
         loginUser();
     }, [isDataEmpty])
@@ -62,6 +76,7 @@ const UserProfile = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
 
     return isDataEmpty ? <SkeltonLoading /> : (
         <div>
@@ -88,8 +103,8 @@ const UserProfile = () => {
                 <UserProfileDetails data={Data} onOpen={onOpen} />
             </div>
             <EditProfileModal isOpen={isOpen} onClose={onClose} data={Data} setData={setData} />
-            {Data?.days_remaining <= 0 && <ExpiryModal />}
-
+            {Data?.is_expired && <ExpiryModal />}
+            <Toaster />
         </div>
     )
 }

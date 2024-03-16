@@ -5,12 +5,6 @@ import LocationMap from '../ResuableComponents/LocationMap ';
 
 const MorePartnersDetails = ({ branchDetails }) => {
 
-    const services = [
-        { facility: 'Service 1', discountPercentage: 10 },
-        { facility: 'Service 2', discountPercentage: 15 },
-        { facility: 'Service 3', discountPercentage: 20 },
-        { facility: 'Service 4', discountPercentage: 25 },
-    ];
 
     return branchDetails === null ?
         <div>

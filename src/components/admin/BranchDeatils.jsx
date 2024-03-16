@@ -1,8 +1,12 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import CoustomInput from './CoustomInput'
-import { validatePincode } from '../../utils/Validation';
+import { getErrorMessage, validatePincode } from '../../utils/Validation';
 import { useFormData, useFormData2, getCities, getStates, keralaDistricts } from '../../utils/formData';
 import Dropdown from './Dropdown';
+import { useParams } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { get_api, get_api_form } from '../../utils/api';
 
 
 const BranchDeatils = () => {
@@ -14,13 +18,18 @@ const BranchDeatils = () => {
     const [districts] = useState(keralaDistricts);
     const [states] = useState(getStates());
     const [formData, setFormData] = useFormData()
-    const [checkedOption2, setCheckedOption2] = useState('wholesaler');
-
-
-
+    const [checkedOption2, setCheckedOption2] = useState('Both');
+    const [Categories, setCategories] = useState([]);
 
     const addImage = useRef(null);
 
+    const { id } = useParams();
+
+    const user = useSelector(state => state.adminAuth.adminUser)
+
+    useEffect(() => {
+        fetchCategories()
+    }, [])
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
@@ -40,7 +49,7 @@ const BranchDeatils = () => {
         console.log(selectedImages);
         setFormData2({
             ...formData2,
-            Photosofstore: selectedImages,
+            image: selectedImages,
         });
         setimageError('')
     }
@@ -59,17 +68,37 @@ const BranchDeatils = () => {
     const handleRemoveImage = (index) => {
         setFormData2((prevState) => ({
             ...prevState,
-            Photosofstore: prevState.Photosofstore.filter((_, i) => i !== index),
+            image: prevState.image.filter((_, i) => i !== index),
         }));
     };
 
-    const Onsubmit = (event) => {
+    const Onsubmit = async (event) => {
         event.preventDefault();
         if (imageError) {
             return;
         }
-        formData.Branch = formData2;
-        console.log(formData);
+        console.log(formData2);
+        try {
+            console.log(formData);
+            const response = await get_api_form(user?.token).post('/shop/vendor/company/create/', formData2);
+            console.log(response);
+            if (response.status === 201) {
+
+                toast.success('Branch added successfuly')
+                // navigate(`/admin-home/add-Parnter/branch-details/${response.data.id}`);
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
     }
 
     const onblur = (event) => {
@@ -104,10 +133,38 @@ const BranchDeatils = () => {
         setCheckedOption2(value);
         setFormData2(prevState => ({
             ...prevState,
-            businessType: value,
+            sales_type: value,
         }));
     };
 
+    const updateCategory = (Category) => {
+        const category = Categories.find(category => category.name === Category);
+        setFormData(prevState => ({
+            ...prevState,
+            category: category.id,
+        }));
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await get_api(user?.token).get('/shop/categories/');
+            if (response.status === 200) {
+                setCategories(response?.data)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    };
 
     return (
         <div className='mt-5 mb-4'>
@@ -116,13 +173,13 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Key person name / Manager name' Placeholder='Enter' type='text' name='Keypersonname' onChange={handleInputChange} />
+                        <CoustomInput headder='Key person name / Manager name' Placeholder='Enter' required={true} type='text' name='KeyPersonName' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Key Person Contact (Manager) Number' Placeholder='Enter' type='text' name='KeyPersonContact' onChange={handleInputChange} />
+                        <CoustomInput headder='Key Person Contact (Manager) Number' Placeholder='Enter' required={true} type='text' name='KeyPersonContact' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Locality' Placeholder='Enter' type='text' name='Locality' onChange={handleInputChange} />
+                        <CoustomInput headder='Locality' required={true} Placeholder='Enter' type='text' name='Locality' onChange={handleInputChange} />
                     </div>
 
                 </div>
@@ -130,7 +187,7 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Registered Address' Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
+                        <CoustomInput headder='Registered Address' required={true} Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
                         <p className='text-xs text-gray-400'>Business Type</p>
@@ -138,29 +195,40 @@ const BranchDeatils = () => {
                             <div className='flex w-2/4 gap-3'>
                                 <input
                                     type="radio"
-                                    id="wholesaler"
-                                    name="businessType"
-                                    value="wholesaler"
-                                    checked={checkedOption2 === 'wholesaler'}
+                                    id="wholesale"
+                                    name="sales_type"
+                                    value="wholesale"
+                                    checked={checkedOption2 === 'wholesale'}
                                     onChange={handleCheckboxChange2}
                                 />
-                                <label htmlFor="wholesaler" className='text-sm text-gray-400'>Wholesaler</label>
+                                <label htmlFor="wholesale" className='text-sm text-gray-400'>wholesale</label>
                             </div>
                             <div className='flex w-2/4 gap-3'>
                                 <input
                                     type="radio"
                                     id="retail"
-                                    name="businessType"
+                                    name="sales_type"
                                     value="retail"
                                     checked={checkedOption2 === 'retail'}
                                     onChange={handleCheckboxChange2}
                                 />
                                 <label htmlFor="retail" className='text-sm text-gray-400'>Retail</label>
                             </div>
+                            <div className='flex  gap-3'>
+                                <input
+                                    type="radio"
+                                    id="both"
+                                    name="sales_type"
+                                    value="both"
+                                    checked={checkedOption2 === 'both'}
+                                    onChange={handleCheckboxChange2}
+                                />
+                                <label htmlFor="retail" className='text-sm text-gray-400'>Both</label>
+                            </div>
                         </div>
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Pin Code' Placeholder='Enter' type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
+                        <CoustomInput headder='Pin Code' Placeholder='Enter' required={true} type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
                         {pincodeError && (<p className='text-xs text-center text-red-500'>{pincodeError}</p>)}
                     </div>
 
@@ -186,7 +254,7 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Town' Placeholder='Enter' type='text' name='Town' onChange={handleInputChange} />
+                        <CoustomInput headder='Town' Placeholder='Enter' required={true} type='text' name='Town' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
                         <CoustomInput headder='Land phone' Placeholder='Enter Number' type='text' name='Landphone' onChange={handleInputChange} />
@@ -196,8 +264,8 @@ const BranchDeatils = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Normal Working hours [from time, to time]</p>
                             <div className='py-2 flex gap-3'>
-                                <input type="time" name='NormalWorkinghoursFrom' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-                                <input type="time" name='NormalWorkinghoursTo' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursFrom' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursTo' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -208,13 +276,13 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Google Map link' Placeholder='Paste your Google Map link' type='text' name='GoogleMaplink' onChange={handleInputChange} />
+                        <CoustomInput headder='Google Map link' required={false} Placeholder='Paste your Google Map link' type='text' name='google_map_link' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
                         <div className='w-full py-2'>
-                            <p className='text-xs text-gray-400'>Select Type</p>
+                            <p className='text-xs text-gray-400'>Select category</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose Type" p='3' font="font-normal" textcolor="text-gray-400" />
+                                <Dropdown text="Choose Category" p='3' font="font-normal" onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)} textcolor="text-gray-400" />
                             </div>
                         </div>
                     </div>
@@ -262,7 +330,7 @@ const BranchDeatils = () => {
                 <div className='flex gap-6 mt-2 '>
                     <div className='w-6/12'>
                         <div className='flex gap-6'>
-                            {formData2 && (formData2?.Photosofstore.map((img, index) => (
+                            {formData2 && (formData2?.image.map((img, index) => (
                                 <div className='w-2/6 h-[100px] shadow-lg  border' key={index}>
                                     <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt="" />
                                     <p className=' text-xs text-red-500 cursor-pointer' onClick={() => handleRemoveImage(index)}>Remove</p>
@@ -293,16 +361,18 @@ const BranchDeatils = () => {
                     </div>
                     <div className='w-6/12 '>
                         <div className=''>
-                            <input type="text" name='HeadOfficeAddress' onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                            <input type="text" name='head_office_address' onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                         </div>
                         <div className='flex  mt-4'>
                             <button className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Previous</button>
-                            <button type='submit' className='py-1 px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 '>Next</button>
+                            <button className='py-1 px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 '>Add more</button>
+                            <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>
                         </div>
                     </div>
                 </div>
 
             </form>
+            <Toaster />
         </div>
     )
 }

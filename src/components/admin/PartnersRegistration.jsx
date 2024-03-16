@@ -7,7 +7,7 @@ const PartnersRegistration = () => {
 
     const location = useLocation()
 
-    
+
     return (
         <div className='w-full rounded-md p-1 px-4 my-3 '>
             <div className='flex justify-between'>
@@ -21,9 +21,9 @@ const PartnersRegistration = () => {
                 </div>
                 <div
                     id="div2"
-                    className={`w-2/12 p-3 flex items-center border-b-2 cursor-pointer ${location.pathname === '/admin-home/add-Parnter/branch-details' ? 'border-[#80509F] ' : ''}`}
+                    className={`w-2/12 p-3 flex items-center border-b-2 cursor-pointer ${location.pathname === '/admin-home/add-Parnter/branch-details/:id' ? 'border-[#80509F] ' : ''}`}
                 >
-                    <Link to='branch-details' >
+                    <Link to='branch-details/:id' >
                         <p className='font-bold text-xs text-gray-500 font-poppins'>Branch Details</p>
                     </Link>
                 </div>

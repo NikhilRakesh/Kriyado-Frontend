@@ -1,7 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Dropdown from './Dropdown';
 import { useFormData, getCities, getStates, keralaDistricts } from '../../utils/formData';
-import { validateEmail, validatePincode, ValiatePhoneNumber } from '../../utils/Validation';
+import { validateEmail, validatePincode, ValiatePhoneNumber, getErrorMessage } from '../../utils/Validation';
+import toast, { Toaster } from 'react-hot-toast';
+import { get_api, get_api_form } from '../../utils/api';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 const ParnteRegesterPage = () => {
@@ -15,11 +19,19 @@ const ParnteRegesterPage = () => {
     const [pincodeError, setPincodeError] = useState('');
     const [NumberError, setNumberError] = useState('');
     const [imageError, setimageError] = useState('');
-    const [checkedOption2, setCheckedOption2] = useState('wholesaler');
-
+    const [checkedOption2, setCheckedOption2] = useState('Both');
+    const [Categories, setCategories] = useState([]);
 
     const inputFile = useRef(null);
     const addImage = useRef(null);
+    const user = useSelector(state => state.adminAuth.adminUser)
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchCategories()
+    }, [])
+
 
     const handleClick = () => {
         inputFile.current.click();
@@ -32,7 +44,7 @@ const ParnteRegesterPage = () => {
     const handleChangeFirstimage = (event) => {
         setFormData({
             ...formData,
-            Logo: event.target.files[0],
+            logo: event.target.files[0],
         });
     };
 
@@ -44,17 +56,65 @@ const ParnteRegesterPage = () => {
         const selectedImages = Array.from(event.target.files).map((file) => file);
         setFormData({
             ...formData,
-            Photosofstore: selectedImages,
+            image: selectedImages,
         });
         setimageError('')
     };
 
-    const handleSubmitForForm = (event) => {
+    const handleSubmitForForm = async (event) => {
         event.preventDefault();
         if (emailError || pincodeError || NumberError || imageError) {
             return;
         }
-        console.log(formData);
+        try {
+            console.log(formData);
+            const response = await get_api_form(user?.token).post('/shop/vendor/company/create/', formData);
+            console.log(response);
+            if (response.status === 201) {
+                setFormData({
+                    organization: '',
+                    owner: '',
+                    PinCode: '',
+                    Locality: '',
+                    Town: '',
+                    District: '',
+                    State: '',
+                    country: '',
+                    KeyPersonName: '',
+                    KeyPersonContact: '',
+                    Landphone: '',
+                    RegisteredAddress: '',
+                    category: '',
+                    email_id: '',
+                    website: '',
+                    google_map_link: '',
+                    facebook_link: '',
+                    instagram_link: '',
+                    youtube_link: '',
+                    NormalWorkingHoursFrom: '',
+                    NormalWorkingHoursTo: '',
+                    image: [],
+                    logo: [],
+                    head_office_address: '',
+                    mobile_number: '',
+                    HomeDelivery: '',
+                    sales_type: '',
+                })
+                toast.success('Company created successfuly')
+                navigate(`/admin-home/add-Parnter/branch-details/${response.data.id}`);
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
     }
 
     const handleInputChange = (event) => {
@@ -94,10 +154,18 @@ const ParnteRegesterPage = () => {
         }));
     };
 
+    const updateCategory = (Category) => {
+        const category = Categories.find(category => category.name === Category);
+        setFormData(prevState => ({
+            ...prevState,
+            category: category.id,
+        }));
+    };
+
     const handleRemoveImage = (index) => {
         setFormData((prevState) => ({
             ...prevState,
-            Photosofstore: prevState.Photosofstore.filter((_, i) => i !== index),
+            image: prevState.image.filter((_, i) => i !== index),
         }));
     };
 
@@ -106,10 +174,30 @@ const ParnteRegesterPage = () => {
         setCheckedOption2(value);
         setFormData(prevState => ({
             ...prevState,
-            businessType: value,
+            sales_type: value,
         }));
     };
 
+    const fetchCategories = async () => {
+        try {
+            const response = await get_api(user?.token).get('/shop/categories/');
+            if (response.status === 200) {
+                setCategories(response?.data)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    };
 
     return (
         <div className='mt-5 mb-4'>
@@ -135,7 +223,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Name of Organization</p>
                             <div className='py-2'>
-                                <input type="text" name='Organization' required onChange={handleInputChange} className='border outline-0 text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
+                                <input type="text" name='organization' value={formData.organization} required onChange={handleInputChange} className='border outline-0 text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -145,6 +233,7 @@ const ParnteRegesterPage = () => {
                                     onChange={handleInputChange}
                                     className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100'
                                     placeholder="Enter Pin Code"
+                                    value={formData.PinCode}
                                     onBlur={(e) => validatePincode(e.target.value, setPincodeError)} />
                                 {pincodeError && (<p className='text-xs text-center text-red-500'>{pincodeError}</p>)}
                             </div>
@@ -158,7 +247,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Key person name / Manager name</p>
                             <div className='py-2'>
-                                <input type="text" required name='Keypersonname' onChange={handleInputChange} className='border text-sm outline-0 text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
+                                <input type="text" value={formData.KeyPersonName} required name='KeyPersonName' onChange={handleInputChange} className='border text-sm outline-0 text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
                             </div>
                         </div>
                     </div>
@@ -167,13 +256,13 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Name of Owner</p>
                             <div className='py-2'>
-                                <input type="text" name='Owner' required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
+                                <input type="text" name='owner' value={formData.owner} required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Locality</p>
                             <div className='py-2'>
-                                <input type="text" name='Locality' required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter " />
+                                <input type="text" name='Locality' value={formData.Locality} required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter " />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -185,7 +274,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Key Person Contact (Manager) Number</p>
                             <div className='py-2'>
-                                <input type="text" name='KeyPersonContact' required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter Owners name" />
+                                <input type="text" name='KeyPersonContact' value={formData.KeyPersonContact} required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter Owners name" />
                             </div>
                         </div>
                     </div>
@@ -194,10 +283,11 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Mobile Number</p>
                             <div className='py-2'>
-                                <input type="text" name='MobileNumber'
+                                <input type="text" name='mobile_number'
                                     required onChange={handleInputChange}
                                     className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100'
                                     placeholder="Enter number"
+                                    value={formData.mobile_number}
                                     onBlur={(e) => ValiatePhoneNumber(e.target.value, setNumberError)} />
                                 {NumberError && (<p className='text-xs text-center text-red-500'>{NumberError}</p>)}
                             </div>
@@ -205,7 +295,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Town</p>
                             <div className='py-2'>
-                                <input type="text" name='Town' required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter number" />
+                                <input type="text" name='Town' value={formData.Town} required onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter number" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -217,7 +307,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Land phone</p>
                             <div className='py-2'>
-                                <input type="text" name='Landphone' onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter number" />
+                                <input type="text" name='Landphone' value={formData.Landphone} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter number" />
                             </div>
                         </div>
                     </div>
@@ -228,43 +318,55 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Registered Address</p>
                             <div className='py-2'>
-                                <input type="text" name='RegisteredAddress' required onChange={handleInputChange} className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Address" />
+                                <input type="text" name='RegisteredAddress' value={formData.RegisteredAddress} required onChange={handleInputChange} className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Address" />
                             </div>
                         </div>
                     </div>
                     <div className='w-4/12'>
                         <p className='text-xs text-gray-400'>Business Type</p>
-                        <div className='flex pt-6'>
-                            <div className='flex w-2/4 gap-3'>
+                        <div className='flex pt-6 w-full gap-5'>
+                            <div className='flex  gap-3'>
                                 <input
                                     type="radio"
                                     id="wholesaler"
-                                    name="businessType"
-                                    value="wholesaler"
-                                    checked={checkedOption2 === 'wholesaler'}
+                                    name="sales_type"
+                                    value="wholesale"
+                                    checked={checkedOption2 === 'wholesale'}
                                     onChange={handleCheckboxChange2}
                                 />
                                 <label htmlFor="wholesaler" className='text-sm text-gray-400'>Wholesaler</label>
                             </div>
-                            <div className='flex w-2/4 gap-3'>
+                            <div className='flex  gap-3'>
                                 <input
                                     type="radio"
                                     id="retail"
-                                    name="businessType"
+                                    name="sales_type"
                                     value="retail"
                                     checked={checkedOption2 === 'retail'}
                                     onChange={handleCheckboxChange2}
                                 />
                                 <label htmlFor="retail" className='text-sm text-gray-400'>Retail</label>
                             </div>
+                            <div className='flex  gap-3'>
+                                <input
+                                    type="radio"
+                                    id="both"
+                                    name="sales_type"
+                                    value="both"
+                                    checked={checkedOption2 === 'both'}
+                                    onChange={handleCheckboxChange2}
+                                />
+                                <label htmlFor="retail" className='text-sm text-gray-400'>Both</label>
+                            </div>
                         </div>
                     </div>
 
                     <div className='w-4/12'>
                         <div className='w-full py-2'>
-                            <p className='text-xs text-gray-400'>Select Type</p>
+                            <p className='text-xs text-gray-400'>Select Category</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose Type" p='3' font="font-normal" textcolor="text-gray-400" />
+                                <Dropdown text="Choose Category" p='3' onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)}
+                                    font="font-normal" textcolor="text-gray-400" />
                             </div>
                         </div>
                     </div>
@@ -275,10 +377,11 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Email id</p>
                             <div className='py-2'>
-                                <input type="email" name='Emailid'
+                                <input type="email" name='email_id'
                                     required onChange={handleInputChange}
                                     className='border text-sm  text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100'
                                     placeholder="Enter email"
+                                    value={formData.email_id}
                                     onBlur={(e) => validateEmail(e.target.value, setEmailError)} />
                                 {emailError && (<p className='text-xs text-center text-red-500'>{emailError}</p>)}
                             </div>
@@ -286,13 +389,13 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Facebook link</p>
                             <div className='py-2'>
-                                <input type="text" name='Facebooklink' onChange={handleInputChange} className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" value={formData.facebook_link} name='facebook_link' onChange={handleInputChange} className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Normal Working hours [from time, to time]</p>
                             <div className='py-2'>
-                                <input type="time" name='NormalWorkinghoursFrom' required onChange={handleInputChange} className="border border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" value={formData.NormalWorkingHoursFrom} name='NormalWorkingHoursFrom' required onChange={handleInputChange} className="border border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -301,19 +404,19 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Website</p>
                             <div className='py-2'>
-                                <input type="text" name='Website' onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='website' value={formData.website} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Instagram link</p>
                             <div className='py-2'>
-                                <input type="text" name='Instagramlink' onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='instagram_link' value={formData.instagram_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs  text-white'>to</p>
                             <div className='py-2'>
-                                <input type="time" name='NormalWorkinghoursTo' required onChange={handleInputChange} className="border border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursTo' value={formData.NormalWorkingHoursTo} required onChange={handleInputChange} className="border border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -322,13 +425,13 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Google Map link</p>
                             <div className='py-2'>
-                                <input type="text" name='GoogleMaplink' onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='google_map_link' value={formData.google_map_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Youtube link</p>
                             <div className='py-2'>
-                                <input type="text" name='Youtubelink' onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='youtube_link' value={formData.youtube_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -371,7 +474,7 @@ const ParnteRegesterPage = () => {
                 <div className='flex gap-6 mt-2 '>
                     <div className='w-6/12'>
                         <div className='flex gap-6'>
-                            {formData && (formData?.Photosofstore.map((img, index) => (
+                            {formData && (formData?.image.map((img, index) => (
                                 <div className='w-2/6 h-[100px] shadow-lg  border' key={img}>
                                     <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt="" />
                                     <p className=' text-xs text-red-500 cursor-pointer' onClick={() => handleRemoveImage(index)}>Remove</p>
@@ -401,7 +504,7 @@ const ParnteRegesterPage = () => {
                     </div>
                     <div className='w-6/12 '>
                         <div className=''>
-                            <input type="text" name='HeadOfficeAddress' onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                            <input type="text" name='head_office_address' value={formData.head_office_address} onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                         </div>
                         <div className='flex  mt-4'>
                             <button className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Previous</button>
@@ -410,6 +513,7 @@ const ParnteRegesterPage = () => {
                     </div>
                 </div>
             </form>
+            <Toaster />
         </div>
     )
 }

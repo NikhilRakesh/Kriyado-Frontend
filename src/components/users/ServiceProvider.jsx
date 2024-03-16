@@ -4,8 +4,8 @@ const ServiceProvider = ({ branchDetails }) => {
     const { name, logo, mobile_number, KeyPersonName, KeyPersonContact, address, company } = branchDetails;
     const [coverIndex, setCoverIndex] = useState(0);
 
+    console.log('branchDetails', branchDetails);
     const coverImages = branchDetails?.images || [];
-    console.log(branchDetails);
     useEffect(() => {
         const interval = setInterval(() => {
             setCoverIndex((prevIndex) => (prevIndex + 1) % coverImages.length);
@@ -25,7 +25,7 @@ const ServiceProvider = ({ branchDetails }) => {
                     />
                 )}
                 <div className="absolute top-[115px]  left-0 right-0 flex items-center justify-center">
-                    <img src={`${branchDetails.company.logo??'/icons8-shop-100.png'}`} alt={name} className="w-20 h-20 rounded-full bg-[#e6d8ef] p-1" />
+                    <img src={`${branchDetails.company.logo ?? '/icons8-shop-100.png'}`} alt={name} className="w-20 h-20 rounded-full bg-[#e6d8ef] p-1" />
                 </div>
             </div>
 

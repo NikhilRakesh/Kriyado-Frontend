@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import SmallCardSkeleton from '../../components/ResuableComponents/smallCardSkelton'
 
 const PartnersDeatails = ({ Data }) => {
-    
+
     return Data.length === 0 ? <SmallCardSkeleton /> : (
         <div className='border border-gray-300 rounded-sm p-5 md:flex flex-wrap   justify-center overflow-scroll h-[470px] customscrollbar'>
             {Data?.map((d, i) => (

@@ -3,6 +3,7 @@ import profileEditForm from '../../utils/formData';
 import { useSelector } from 'react-redux';
 import { get_api } from '../../utils/api';
 import { getErrorMessage } from '../../utils/Validation';
+import toast, { Toaster } from 'react-hot-toast';
 
 const EditProfileModal = ({ isOpen, onClose, data, setData }) => {
 
@@ -21,18 +22,25 @@ const EditProfileModal = ({ isOpen, onClose, data, setData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await get_api(user?.token).put('/shop/customer/', formData);
+            const response = await get_api(user?.token).put('/shop/customer/detail_update/user/', formData);
             if (response.status === 200) {
                 setData(response.data)
                 onClose();
             }
         } catch (error) {
             console.log('error', error);
-            if (error.response.data.type === 'client_error') {
-
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
             }
         }
-    }; 
+    };
 
     return (
         <div className={`fixed top-0 left-0 w-full  h-full  bg-black bg-opacity-50 ${isOpen ? '' : 'hidden'}`}>
@@ -60,8 +68,9 @@ const EditProfileModal = ({ isOpen, onClose, data, setData }) => {
                     </div>
                 </form>
             </div>
+            <Toaster />
         </div >
     );
 };
-   
+
 export default EditProfileModal;

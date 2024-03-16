@@ -4,6 +4,8 @@ import MorePartnersDetails from './MorePartnersDetails'
 import { get_api } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import ServiceProvider from './ServiceProvider';
+import { getErrorMessage } from '../../utils/Validation';
+import toast, { Toaster } from 'react-hot-toast';
 
 const MorePartners = () => {
 
@@ -14,12 +16,22 @@ const MorePartners = () => {
 
     const FetchPartnersData = async () => {
         try {
-            const response = await get_api(user?.token).get(`/shop/branches/customer/${id}/`);
+            const response = await get_api(user?.token).get(`/shop/vendor/branches/customer/${id}/`);
             if (response.status === 200) {
                 setbranchDetails(response.data)
             }
         } catch (error) {
             console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
         }
     }
 
@@ -64,6 +76,7 @@ const MorePartners = () => {
                     </div> */}
                 </div>
             </div>
+            <Toaster />
         </div>
     )
 }

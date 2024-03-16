@@ -8,13 +8,17 @@ const UserProfileDetails = ({ data, onOpen }) => {
 
 
     useEffect(() => {
-        const dateObject = new Date(data?.purchase_date);
-        const dateObject2 = new Date(data?.dob);
-        const dateObject3 = new Date(data?.expiry_date);
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        setPurchaseDate(dateObject.toLocaleDateString('en-US', options))
-        setDateOfBirth(dateObject2.toLocaleDateString('en-US', options))
-        setExpiryDate(dateObject3.toLocaleDateString('en-US', options))
+        const packageData = data?.package_c.find(pkg => pkg.is_active === true);
+        if (packageData) {
+            const { purchase_date, expiry_date } = packageData;
+            const dateObject = new Date(purchase_date);
+            const dateObject2 = new Date(data?.dob);
+            const dateObject3 = new Date(expiry_date);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            setPurchaseDate(dateObject.toLocaleDateString('en-US', options))
+            setDateOfBirth(dateObject2.toLocaleDateString('en-US', options))
+            setExpiryDate(dateObject3.toLocaleDateString('en-US', options))
+        }
     }, [data])
 
 

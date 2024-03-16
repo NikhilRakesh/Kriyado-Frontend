@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormData }) => {
 
     const [selectedType, setSelectedType] = useState({});
-    
+
     const handleTypeSelect = (typeData) => {
         setSelectedType(typeData);
         updatePackageInFormData(typeData.id);
@@ -25,23 +25,25 @@ const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormDat
                                 <div key={pkg.id} className="p-4 border border-gray-200 rounded-md">
                                     <h4 className="text-lg font-semibold mb-2">{pkg.name}</h4>
                                     <div className="space-y-2">
-                                        {pkg.type_p.map((typeData) => (
-                                            <div key={typeData.id} className="flex justify-between items-center p-2 border border-gray-200 rounded-md">
-                                                <div>
-                                                    <p className="text-sm font-semibold">Actual Price: {typeData.actual_price}</p>
-                                                    <p className="text-sm font-semibold">Discount Price: {typeData.discount_price}</p>
-                                                    <p className="text-sm font-semibold">Duration Days: {typeData.duration_days}</p>
+                                        {pkg.type_p
+                                            .filter((typeData) => typeData.is_active) 
+                                            .map((typeData) => (
+                                                <div key={typeData.id} className="flex justify-between items-center p-2 border border-gray-200 rounded-md">
+                                                    <div>
+                                                        <p className="text-sm font-semibold">Actual Price: {typeData.actual_price}</p>
+                                                        <p className="text-sm font-semibold">Discount Price: {typeData.discount_price}</p>
+                                                        <p className="text-sm font-semibold">Duration Days: {typeData.duration_days}</p>
+                                                    </div>
+                                                    <input
+                                                        type="radio"
+                                                        name="packageType"
+                                                        id={`type_${typeData.id}`}
+                                                        value={typeData.id}
+                                                        checked={selectedType && selectedType.id === typeData.id}
+                                                        onChange={() => handleTypeSelect(typeData)}
+                                                    />
                                                 </div>
-                                                <input
-                                                    type="radio"
-                                                    name="packageType"
-                                                    id={`type_${typeData.id}`}
-                                                    value={typeData.id}
-                                                    checked={selectedType && selectedType.id === typeData.id}
-                                                    onChange={() => handleTypeSelect(typeData)}
-                                                />
-                                            </div>
-                                        ))}
+                                            ))}
                                     </div>
                                 </div>
                             ))}

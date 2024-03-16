@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { get_api } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import { toast, Toaster } from 'react-hot-toast';
+import { getErrorMessage } from '../../utils/Validation';
 
 
 const UserPartners = () => {
@@ -18,13 +19,24 @@ const UserPartners = () => {
 
     const fetchUserData = async () => {
         try {
-            const response = await get_api(user?.token).get('/shop/branches/customer/');
+            const response = await get_api(user?.token).get('/shop/vendor/branches/customer/');
             if (response.status === 200) {
                 setData(response.data)
             }
         } catch (error) {
             console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
         }
+
     };
 
     const fetchCatagories = async () => {
@@ -35,16 +47,27 @@ const UserPartners = () => {
             }
         } catch (error) {
             console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
         }
     }
 
 
-    const searchFilter = async () => {
+    const searchFilter = async () => {  
         if (Value && !seletedCategories) {
             setinputFocous(false)
             try {
-                const response = await get_api(user?.token).get(`/shop/branches/customer/?search=${Value}`);
-                if (response.status === 200 && response.data.length !== 0) {
+                const response = await get_api(user?.token).get(`/shop/vendor/branches/customer/?search=${Value}`);
+                console.log(response);
+                if (response.status === 200 && response.data.length >= 0) {
                     setData(response.data);
                     setValue('')
                 } else {
@@ -53,11 +76,21 @@ const UserPartners = () => {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
         } else if (seletedCategories && !Value) {
             try {
-                const response = await get_api(user?.token).get(`/shop/branches/customer/?category__name=${seletedCategories}`);
-                if (response.status === 200 && response.data.length !== 0) {
+                const response = await get_api(user?.token).get(`/shop/vendor/branches/customer/?category__name=${seletedCategories}`);
+                if (response.status === 200 && response.data.length >= 0) {
                     setData(response.data);
                     setseletedCategories('')
                 } else {
@@ -66,6 +99,16 @@ const UserPartners = () => {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
 
         } else {

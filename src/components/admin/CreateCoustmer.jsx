@@ -8,7 +8,7 @@ import { getErrorMessage } from '../../utils/Validation';
 import { useSelector } from 'react-redux';
 import { validateEmail, validatePincode, ValiatePhoneNumber } from '../../utils/Validation';
 import CustmorPackageModal from './CustmorPackageModal';
-import LoadingSpinner from '../ResuableComponents/LoadingSpinner';
+import LoadingSpinners from './LoadingSpinners';
 
 
 const CreateCoustmer = () => {
@@ -285,7 +285,7 @@ const CreateCoustmer = () => {
                     </div>
                 </div>
             </form>
-            {isLoading && <LoadingSpinner />}
+            {isLoading && <LoadingSpinners />}
             <CustmorPackageModal packages={packages} isOpen={isOPen} onClose={onCloseModal} updatePackageInFormData={updatePackageInFormData} />
             <Toaster />
         </div>

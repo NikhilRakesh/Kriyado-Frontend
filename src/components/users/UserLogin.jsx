@@ -16,7 +16,7 @@ const UserLogin = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [LoginError, setLoginError] = useState([]);
-   
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -40,9 +40,10 @@ const UserLogin = () => {
                         navigate('/vendors')
                     }
                 }
-            } catch (error) {    
+            } catch (error) {
+                console.log(error);
                 const errorMessages = getErrorMessage(error)
-                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors');
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors' || error.field === error.field);
                 if (generalErrors) {
                     setLoginError(generalErrors.map(error => error.message));
                 }
