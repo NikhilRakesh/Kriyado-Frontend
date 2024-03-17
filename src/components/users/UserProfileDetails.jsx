@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import UserProfileModal from './UserProfileModal'
 
 const UserProfileDetails = ({ data, onOpen }) => {
 
@@ -21,12 +22,11 @@ const UserProfileDetails = ({ data, onOpen }) => {
         }
     }, [data])
 
-
     return (
         <div className='md:flex '>
             <div className='m-2 p-2 w-full md:w-8/12 '>
-                <div className='md:flex justify-between mb-5'>
-                    <div >
+                <div className='md:flex  mb-5 justify-between'>
+                    <div className='px-2 w-4/12' >
                         <h1 className='font-bold text-black sm:p-1 '>My Profile</h1>
                         <p className='text-[10px] font-sans sm:p-1'>Customer ID</p>
                         <p className='text-xs font-sans  font-thin sm:p-1'><span>CID </span>{data?.customer_id}</p>
@@ -135,7 +135,7 @@ const UserProfileDetails = ({ data, onOpen }) => {
                         </div>
                     </div>
                 </div>
-                <div className='  rounded-sm'>
+                <div className='rounded-sm'>
                     <img src="/ad-area@2x.png" alt="" />
                 </div>
             </div>

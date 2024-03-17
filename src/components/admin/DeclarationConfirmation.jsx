@@ -1,11 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CoustomInput from './CoustomInput'
+import { useNavigate, useParams } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 const DeclarationConfirmation = () => {
+
+  const [firstCheckboxChecked, setFirstCheckboxChecked] = useState(false);
+  const [secondCheckboxChecked, setSecondCheckboxChecked] = useState(false);
+
+  const Navigate = useNavigate()
+  const { id } = useParams();
+
+  const handleFirstCheckboxChange = (event) => {
+    setFirstCheckboxChecked(event.target.checked);
+  };
+
+  const handleSecondCheckboxChange = (event) => {
+    setSecondCheckboxChecked(event.target.checked);
+  };
+
+  const handleNextClick = () => {
+    if (firstCheckboxChecked && secondCheckboxChecked) {
+      Navigate(`/admin-home/add-Parnter/Vendor-Submission/${id}`)
+    } else {
+      toast(
+        "Kindly ensure that you have agreed to the terms and conditions before proceeding.",
+        {
+          duration: 6000,
+        }
+      );
+    }
+  }
   return (
-    <div className='mt-5 mb-4'>
+    <div className='mt-5 mb-4 '>
       <h1 className='font-bold'>DeclarationConfirmation</h1>
-      <div className='border h-[800px] my-5 border-gray-300 p-3 rounded-sm'>
+      <div className='border h-[800px] my-5 border-gray-300 p-3 rounded-lg shadow-sm bg-white'>
 
         <ul >
           <li >
@@ -47,38 +76,40 @@ const DeclarationConfirmation = () => {
           </li>
         </ul>
       </div>
-      <div className='flex gap-6'>
-        <div className='w-6/12'>
-          <CoustomInput headder='Name' Placeholder='Enter' />
-        </div>
-        <div className='w-6/12'>
-          <CoustomInput headder='Designation' Placeholder='Enter' />
-        </div>
-      </div>
 
-      <div className='flex gap-3 mt-4'>
-        <div>
-          <input type="checkbox" />
+      <div className='bg-white p-5 rounded-lg border shadow-sm'>
+        <div className='flex gap-6'>
+          <div className='w-6/12'>
+            <CoustomInput headder='Name' Placeholder='Enter' />
+          </div>
+          <div className='w-6/12'>
+            <CoustomInput headder='Designation' Placeholder='Enter' />
+          </div>
         </div>
-        <div>
-          <p className='text-sm'>I hereby affirm that we have agreed to extend the specified discount rate for Kriyado Card holders, as outlined in the terms of the agreement with Kriyado Card Management. We hereby agree to provide mentioned exclusive discounts on mentioned categories to the customers of Kriyado Card with effective from the date of submission</p>
-        </div>
-      </div>
 
-      <div className='flex gap-3 mt-4'>
-        <div>
-          <input type="checkbox" />
+        <div className='flex gap-3 mt-4'>
+          <div>
+            <input type="checkbox" checked={firstCheckboxChecked} onChange={handleFirstCheckboxChange} />
+          </div>
+          <div>
+            <p className='text-sm'>I hereby affirm that we have agreed to extend the specified discount rate for Kriyado Card holders, as outlined in the terms of the agreement with Kriyado Card Management. We hereby agree to provide mentioned exclusive discounts on mentioned categories to the customers of Kriyado Card with effective from the date of submission</p>
+          </div>
         </div>
-        <div>
-          <p className='text-sm'> I confirm that I am duly authorized to make this commitment on behalf of our institution and that the terms of this agreement are understood and accepted by our organization. This declaration is made in good faith and signifies our commitment to honor the agreed-upon discount rate for Kriyado Card holders.</p>
+
+        <div className='flex gap-3 mt-4'>
+          <div>
+            <input type="checkbox" checked={secondCheckboxChecked} onChange={handleSecondCheckboxChange} />
+          </div>
+          <div>
+            <p className='text-sm'> I confirm that I am duly authorized to make this commitment on behalf of our institution and that the terms of this agreement are understood and accepted by our organization. This declaration is made in good faith and signifies our commitment to honor the agreed-upon discount rate for Kriyado Card holders.</p>
+          </div>
         </div>
       </div>
 
       <div className='flex justify-end items-end mt-14 gap-5'>
-        <button className='bg-[#80509F] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md'>Previous</button>
-        <button className='bg-[#9F5080] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md'>Next</button>
+        <button className='bg-[#9F5080] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md' onClick={handleNextClick}>Next</button>
       </div>
-
+      <Toaster />
     </div>
   )
 }

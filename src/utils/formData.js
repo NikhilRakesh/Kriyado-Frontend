@@ -91,6 +91,7 @@ export const useFormData2 = () => {
         head_office_address: '',
         HomeDelivery: '',
         sales_type: '',
+        company: '',
     });
 
     return [formData2, setFormData2];

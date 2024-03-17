@@ -67,9 +67,7 @@ const ParnteRegesterPage = () => {
             return;
         }
         try {
-            console.log(formData);
             const response = await get_api_form(user?.token).post('/shop/vendor/company/create/', formData);
-            console.log(response);
             if (response.status === 201) {
                 setFormData({
                     organization: '',
@@ -475,7 +473,7 @@ const ParnteRegesterPage = () => {
                     <div className='w-6/12'>
                         <div className='flex gap-6'>
                             {formData && (formData?.image.map((img, index) => (
-                                <div className='w-2/6 h-[100px] shadow-lg  border' key={img}>
+                                <div className='w-2/6 h-[100px] shadow-lg  border' key={index}>
                                     <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt="" />
                                     <p className=' text-xs text-red-500 cursor-pointer' onClick={() => handleRemoveImage(index)}>Remove</p>
                                 </div>

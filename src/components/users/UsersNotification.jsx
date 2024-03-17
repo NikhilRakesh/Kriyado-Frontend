@@ -8,8 +8,8 @@ const UsersNotification = () => {
 
     useEffect(() => {
         if (roomName === "CNOT") {
-            const socket = new WebSocket('ws://192.168.80.141:8000/ws/notifications/CNOT/');
-    
+            const socket = new WebSocket('ws://192.168.1.7:8000/ws/notifications/CNOT/');
+
             socket.onopen = () => {
                 console.log('WebSocket connection opened.');
             };
@@ -19,7 +19,7 @@ const UsersNotification = () => {
                 setMessage(data.message);
                 console.log(data.message);
             };
-       
+
             socket.onclose = () => {
                 console.log('WebSocket connection closed.');
             };

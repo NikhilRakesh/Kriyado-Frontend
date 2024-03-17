@@ -5,13 +5,13 @@ const PartnersList = ({ vendors, fetchComapnyDetails }) => {
     const [count, useCount] = useState([1, 2, 1, 1, 1, 1, 1, 1, 1, 11, 1])
     return vendors.length === 0 ?
         <div>
-            {count.map((c, i) => (<PartnerListSkelton />))}
+            {count.map((c, i) => (<PartnerListSkelton key={i} />))}
         </div>
         :
         (
             <div className='overflow-x-scroll h-[550px] customscrollbar'>
                 {vendors.map((vendor, index) => (
-                    <div className='bg-white border border-gray-300 rounded-md mt-3 p-3' key={vendor.id}>
+                    <div className='bg-white border border-gray-300 rounded-md mt-3 p-3' key={index}>
                         <p className='font-bold text-sm font-sans'>{vendor.organization}</p>
                         <div className='flex items-center justify-between mt-3'>
                             <div className='flex gap-3 '>

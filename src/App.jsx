@@ -66,9 +66,9 @@ function App() {
           <Route path="add-Parnter" element={<AdminAddParnter />} >
             <Route path="" element={<ParnteRegesterPage />} />
             <Route path="branch-details/:id" element={<BranchDeatils />} />
-            <Route path="Discount-Entry" element={<DiscountEntry />} />
-            <Route path="Declaration-Confirmation" element={<DeclarationConfirmation />} />
-            <Route path="Vendor-Submission" element={<VendorSubmission />} />
+            <Route path="Discount-Entry/:id" element={<DiscountEntry />} />
+            <Route path="Declaration-Confirmation/:id" element={<DeclarationConfirmation />} />
+            <Route path="Vendor-Submission/:id" element={<VendorSubmission />} />
           </Route>
         </Route>
         <Route path="/" element={isAuthenticated && AuthType.type === 'user' ? (<UserHome />) : (<Navigate to="/login" replace />)} >

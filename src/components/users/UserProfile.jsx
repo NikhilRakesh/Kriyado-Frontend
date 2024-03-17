@@ -8,6 +8,7 @@ import EditProfileModal from './EditProfileModal ';
 import { checkDate, getErrorMessage } from '../../utils/Validation';
 import ExpiryModal from './ExpiryModal';
 import toast, { Toaster } from 'react-hot-toast';
+import ProfileImageModal from './ProfileImageModal';
 
 const UserProfile = () => {
 
@@ -27,6 +28,7 @@ const UserProfile = () => {
     const [PurchaseDate, setPurchaseDate] = useState('')
     const [isOpen, setisOpen] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(true);
+    const [effect, seteffect] = useState(true);
 
     const user = useSelector(state => state.auth.user);
     const isDataEmpty = Object.values(Data).every(value => value === '');
@@ -63,7 +65,7 @@ const UserProfile = () => {
         }
 
         loginUser();
-    }, [isDataEmpty])
+    }, [isDataEmpty, effect])
 
     const onClose = () => {
         setisOpen(false)
@@ -74,9 +76,8 @@ const UserProfile = () => {
     }
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        seteffect(!effect);
     };
-
 
     return isDataEmpty ? <SkeltonLoading /> : (
         <div>
@@ -105,6 +106,7 @@ const UserProfile = () => {
             <EditProfileModal isOpen={isOpen} onClose={onClose} data={Data} setData={setData} />
             {Data?.is_expired && <ExpiryModal />}
             <Toaster />
+            {Data.image === null && <ProfileImageModal close={handleCloseModal} id={Data.id} />}
         </div>
     )
 }

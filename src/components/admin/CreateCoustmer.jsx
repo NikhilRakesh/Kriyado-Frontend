@@ -122,7 +122,7 @@ const CreateCoustmer = () => {
     const createCustmor = async (e) => {
         e.preventDefault()
         try {
-            setIsLoading(true)
+            
             const emptyFields = Object.entries(formData)
                 .filter(([key, value]) => key !== 'image' && value === '')
                 .map(([key]) => key);
@@ -132,6 +132,7 @@ const CreateCoustmer = () => {
                 toast.error(requiredFieldsMessage);
                 return;
             }
+            setIsLoading(true)
             const response = await get_api_form(user?.token).post('/shop/customer/create/', formData);
             if (response.status === 201) {
                 setFormData({

@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import api from "../../utils/api";
 import { FaCheck } from 'react-icons/fa';
 import { adminLogin } from '../../Reducer/adminAuthReducer';
+import VerificationModal from './VerificationModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const UserLogin = () => {
@@ -16,6 +18,8 @@ const UserLogin = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [LoginError, setLoginError] = useState([]);
+    const [opemodal, setopemodal] = useState(false);
+    const [verify, setverify] = useState('');
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -42,16 +46,44 @@ const UserLogin = () => {
                 }
             } catch (error) {
                 console.log(error);
-                const errorMessages = getErrorMessage(error)
-                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors' || error.field === error.field);
-                if (generalErrors) {
-                    setLoginError(generalErrors.map(error => error.message));
+                if (error.response.status === 307) {
+                    setverify(error.response.data.user)
+                    setopemodal(true)
+                } else {
+                    const errorMessages = getErrorMessage(error)
+                    const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === 'non_field_errors' || error.field === error.field);
+                    if (generalErrors) {
+                        setLoginError(generalErrors.map(error => error.message));
+                    }
                 }
             }
         }
 
     };
 
+    const closeModal = () => {
+        setopemodal(false)
+    }
+
+    const verifyApi = async () => {
+        try {
+            const response = await api.post(`/user/re_verify/${verify}/`);
+            if (response.status === 201) {
+                toast.success('Successfuly verified')
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
 
     return (
         <div
@@ -127,6 +159,8 @@ const UserLogin = () => {
                     </form>
                 </div>
             </div>
+            <Toaster />
+            {opemodal && <VerificationModal close={closeModal} verifyApi={verifyApi} />}
         </div>
     );
 };

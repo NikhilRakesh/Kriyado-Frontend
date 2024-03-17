@@ -3,7 +3,7 @@ import CoustomInput from './CoustomInput'
 import { getErrorMessage, validatePincode } from '../../utils/Validation';
 import { useFormData, useFormData2, getCities, getStates, keralaDistricts } from '../../utils/formData';
 import Dropdown from './Dropdown';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { get_api, get_api_form } from '../../utils/api';
@@ -17,19 +17,25 @@ const BranchDeatils = () => {
     const [pincodeError, setPincodeError] = useState('');
     const [districts] = useState(keralaDistricts);
     const [states] = useState(getStates());
-    const [formData, setFormData] = useFormData()
     const [checkedOption2, setCheckedOption2] = useState('Both');
     const [Categories, setCategories] = useState([]);
+    const [effect, setEffect] = useState(true);
 
     const addImage = useRef(null);
 
     const { id } = useParams();
 
-    const user = useSelector(state => state.adminAuth.adminUser)
+        const user = useSelector(state => state.adminAuth.adminUser)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchCategories()
-    }, [])
+        setFormData2({
+            ...formData2,
+            company: id,
+        });
+    }, [effect])
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
@@ -46,7 +52,6 @@ const BranchDeatils = () => {
             return;
         }
         const selectedImages = Array.from(event.target.files).map((file) => file);
-        console.log(selectedImages);
         setFormData2({
             ...formData2,
             image: selectedImages,
@@ -77,15 +82,12 @@ const BranchDeatils = () => {
         if (imageError) {
             return;
         }
-        console.log(formData2);
         try {
-            console.log(formData);
-            const response = await get_api_form(user?.token).post('/shop/vendor/company/create/', formData2);
-            console.log(response);
+            const response = await get_api_form(user?.token).post('/shop/vendor/branches/create/', formData2);
             if (response.status === 201) {
 
                 toast.success('Branch added successfuly')
-                // navigate(`/admin-home/add-Parnter/branch-details/${response.data.id}`);
+                navigate(`/admin-home/add-Parnter/Discount-Entry/${formData2.company}`);
             }
         } catch (error) {
             console.log(error);
@@ -139,7 +141,7 @@ const BranchDeatils = () => {
 
     const updateCategory = (Category) => {
         const category = Categories.find(category => category.name === Category);
-        setFormData(prevState => ({
+        setFormData2(prevState => ({
             ...prevState,
             category: category.id,
         }));
@@ -166,6 +168,52 @@ const BranchDeatils = () => {
         }
     };
 
+    const addMore = async () => {
+        if (imageError) {
+            return;
+        }
+        try {
+            const response = await get_api_form(user?.token).post('/shop/vendor/branches/create/', formData2);
+            console.log(response);
+            if (response.status === 201) {
+                toast.success('Branch added successfuly')
+                setFormData2({
+                    PinCode: '',
+                    Locality: '',
+                    Town: '',
+                    District: '',
+                    State: '',
+                    country: '',
+                    KeyPersonName: '',
+                    KeyPersonContact: '',
+                    Landphone: '',
+                    RegisteredAddress: '',
+                    website: '',
+                    google_map_link: '',
+                    NormalWorkingHoursFrom: '',
+                    NormalWorkingHoursTo: '',
+                    image: [],
+                    head_office_address: '',
+                    HomeDelivery: '',
+                    sales_type: '',
+                    company: '',
+                });
+                setEffect(prevState => !prevState);
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+
     return (
         <div className='mt-5 mb-4'>
             <h1 className='font-bold'>Branch Details</h1>
@@ -173,13 +221,13 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Key person name / Manager name' Placeholder='Enter' required={true} type='text' name='KeyPersonName' onChange={handleInputChange} />
+                        <CoustomInput headder='Key person name / Manager name' value={formData2.KeyPersonName} Placeholder='Enter' required={true} type='text' name='KeyPersonName' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Key Person Contact (Manager) Number' Placeholder='Enter' required={true} type='text' name='KeyPersonContact' onChange={handleInputChange} />
+                        <CoustomInput headder='Key Person Contact (Manager) Number' value={formData2.KeyPersonContact} Placeholder='Enter' required={true} type='text' name='KeyPersonContact' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Locality' required={true} Placeholder='Enter' type='text' name='Locality' onChange={handleInputChange} />
+                        <CoustomInput headder='Locality' required={true} Placeholder='Enter' value={formData2.Locality} type='text' name='Locality' onChange={handleInputChange} />
                     </div>
 
                 </div>
@@ -187,7 +235,7 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Registered Address' required={true} Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
+                        <CoustomInput headder='Registered Address' required={true} value={formData2.RegisteredAddress} Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
                         <p className='text-xs text-gray-400'>Business Type</p>
@@ -228,7 +276,7 @@ const BranchDeatils = () => {
                         </div>
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Pin Code' Placeholder='Enter' required={true} type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
+                        <CoustomInput headder='Pin Code' Placeholder='Enter' value={formData2.PinCode} required={true} type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
                         {pincodeError && (<p className='text-xs text-center text-red-500'>{pincodeError}</p>)}
                     </div>
 
@@ -254,18 +302,18 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Town' Placeholder='Enter' required={true} type='text' name='Town' onChange={handleInputChange} />
+                        <CoustomInput headder='Town' Placeholder='Enter' value={formData2.Town} required={true} type='text' name='Town' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
-                        <CoustomInput headder='Land phone' Placeholder='Enter Number' type='text' name='Landphone' onChange={handleInputChange} />
+                        <CoustomInput headder='Land phone' value={formData2.Landphone} Placeholder='Enter Number' type='text' name='Landphone' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12 flex'>
 
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Normal Working hours [from time, to time]</p>
                             <div className='py-2 flex gap-3'>
-                                <input type="time" name='NormalWorkingHoursFrom' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-                                <input type="time" name='NormalWorkingHoursTo' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursFrom' value={formData2.NormalWorkingHoursFrom} onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursTo' value={formData2.NormalWorkingHoursTo} onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -276,7 +324,7 @@ const BranchDeatils = () => {
                 <div className='flex gap-6'>
 
                     <div className='w-4/12'>
-                        <CoustomInput headder='Google Map link' required={false} Placeholder='Paste your Google Map link' type='text' name='google_map_link' onChange={handleInputChange} />
+                        <CoustomInput headder='Google Map link' value={formData2.google_map_link} required={false} Placeholder='Paste your Google Map link' type='text' name='google_map_link' onChange={handleInputChange} />
                     </div>
                     <div className='w-4/12'>
                         <div className='w-full py-2'>
@@ -361,11 +409,10 @@ const BranchDeatils = () => {
                     </div>
                     <div className='w-6/12 '>
                         <div className=''>
-                            <input type="text" name='head_office_address' onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                            <input type="text" name='head_office_address' value={formData2.head_office_address} onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                         </div>
                         <div className='flex  mt-4'>
-                            <button className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Previous</button>
-                            <button className='py-1 px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 '>Add more</button>
+                            <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more</button>
                             <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>
                         </div>
                     </div>

@@ -21,12 +21,12 @@ const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormDat
                     </div>
                     <div className="bg-white px-4 py-4 sm:px-6">
                         <div className="flex flex-col gap-4">
-                            {packages.map((pkg) => (
-                                <div key={pkg.id} className="p-4 border border-gray-200 rounded-md">
+                            {packages.map((pkg, index) => (
+                                <div key={index} className="p-4 border border-gray-200 rounded-md">
                                     <h4 className="text-lg font-semibold mb-2">{pkg.name}</h4>
                                     <div className="space-y-2">
                                         {pkg.type_p
-                                            .filter((typeData) => typeData.is_active) 
+                                            .filter((typeData) => typeData.is_active)
                                             .map((typeData) => (
                                                 <div key={typeData.id} className="flex justify-between items-center p-2 border border-gray-200 rounded-md">
                                                     <div>
