@@ -1,14 +1,49 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SubscriptionCard from './SubscriptionCard'
 import AnimatedText from '../ResuableComponents/AnimatedText'
 import api, { get_api } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
+import { getErrorMessage } from '../../utils/Validation';
+import SubscriptionCardSkeleton from '../ResuableComponents/SubscriptionCardSkeleton';
 
 const Pricing = () => {
 
+    const [packageType, setPackageType] = useState('BASIC')
+    const [packages, setpackages] = useState([])
+
     const user = useSelector(state => state.auth.user);
 
+    useEffect(() => {
+        fetchPackages()
+    }, [packageType])
+
+    const fetchPackages = async () => {
+        try {
+            const response = await get_api(user?.token).get(`/shop/package_option/user/?type=${packageType}`);
+            if (response.status === 200) {
+                if (response.data.length === 0) {
+                    toast.error(`There is no packages in ${packageType}`)
+                    setPackageType('BASIC')
+                } else {
+                    setpackages(response.data)
+                }
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            setPackageType('BASIC')
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
 
     function loadRazorpayScript(src) {
         return new Promise((resolve) => {
@@ -63,7 +98,7 @@ const Pricing = () => {
                                 toast.success('Successfully toasted!')
                             }
                         } catch (error) {
-                            console.log('handler',error);
+                            console.log('handler', error);
                         }
                     },
                     prefill: {
@@ -118,7 +153,6 @@ const Pricing = () => {
         }
     };
 
-
     return (
         <div className='bg-white rounded-lg m-6 p-6 shadow-lg md:flex  gap-3'>
             <div className=''>
@@ -129,24 +163,53 @@ const Pricing = () => {
                     </div>
 
                     <div className='flex justify-center '>
-                        <div className="flex  border-2 border-[#80509F] rounded-lg px-2 py-2">
-                            <div className=' rounded-md bg-[#80509F] text-white px-2 py-2 md:w-[150px] flex items-center justify-center '><p className='font-bold font-poppins text-center '>Basic</p></div>
-                            <div className=' rounded-md  px-2 py-2 md:w-[150px] flex items-center justify-center'><p className='font-bold font-poppins  text-center'>Combo</p></div>
-                            <div className=' rounded-md  px-2 py-2 w-[150px] flex items-center justify-center'><p className='font-bold font-poppins  text-center'>Grand Package</p></div>
+                        <div className="flex border-2 border-[#80509F] rounded-lg px-2 py-2">
+                            <div
+                                className={`cursor-pointer rounded-md px-2 py-2 md:w-[150px] flex items-center justify-center ${packageType === 'BASIC' ? 'bg-[#80509F] text-white' : ''
+                                    }`}
+                                onClick={() => setPackageType('BASIC')}
+                            >
+                                <p className='font-bold font-poppins text-center'>Basic</p>
+                            </div>
+                            <div
+                                className={`cursor-pointer rounded-md px-2 py-2 md:w-[150px] flex items-center justify-center ${packageType === 'COMBO' ? 'bg-[#80509F] text-white' : ''
+                                    }`}
+                                onClick={() => setPackageType('COMBO')}
+                            >
+                                <p className='font-bold font-poppins text-center'>Combo</p>
+                            </div>
+                            <div
+                                className={`cursor-pointer rounded-md px-2 py-2 md:w-[150px] flex items-center justify-center ${packageType === 'ALL' ? 'bg-[#80509F] text-white' : ''
+                                    }`}
+                                onClick={() => setPackageType('ALL')}
+                            >
+                                <p className='font-bold font-poppins text-center'>Grand Package</p>
+                            </div>
                         </div>
 
                     </div>
                 </div>
-                <div className='md:flex  gap-4 py-8'>
-                    <SubscriptionCard />
-                    <SubscriptionCard />
-                    <SubscriptionCard />
-                </div>
+                {packages.length === 0 ?
+                    (<div className='md:flex py-8 gap-4'>
+                        <SubscriptionCardSkeleton />
+                        <SubscriptionCardSkeleton />
+                        <SubscriptionCardSkeleton />
+                    </div>)
+                    :
+                    (<div className='md:grid md:grid-cols-3 md:gap-8 py-8 '>
+                        {packages?.map((pkg, index) => (
+                            <div key={pkg?.id}>
+                                <SubscriptionCard data={pkg} />
+                            </div>
+                        ))}
+                    </div>)
+                }
+
 
                 <div className='flex justify-center'>
                     <button
                         className='bg-purple-500 text-white px-4 py-2 rounded-md font-semibold'
-                        onClick={displayRazorpayPaymentSdk} // Call the function when the button is clicked
+                        onClick={displayRazorpayPaymentSdk}
                     >
                         Pay with Razorpay
                     </button>

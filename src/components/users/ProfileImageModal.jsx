@@ -19,7 +19,7 @@ const ProfileImageModal = ({ close, id }) => {
     const handleUpload = async () => {
         try {
             if (selectedImage) {
-                const response = await get_api_form(user?.token).put(`/shop/customer/photo/${id}/update/user/`, selectedImage);
+                const response = await get_api_form(user?.token).put(`/shop/customer/photo/${id}/update/user/`, {image:selectedImage});
                 if (response.status === 200) {
                     close();
                 }

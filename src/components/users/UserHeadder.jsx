@@ -16,7 +16,7 @@ const UserHeadder = () => {
 
     useEffect(() => {
         fetchProfileData()
-    }, [])
+    }, [isProfileOpen])
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);

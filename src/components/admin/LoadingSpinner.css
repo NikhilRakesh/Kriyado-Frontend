@@ -4,7 +4,8 @@
 }
 
 .loader {
-    border-top-color: #80509F;
+    border-top-color: #80509F;                       
     -webkit-animation: spin 1.5s linear infinite;
     animation: spin 1.5s linear infinite;
 }
+     

@@ -4,7 +4,6 @@ const ServiceProvider = ({ branchDetails }) => {
     const { name, logo, mobile_number, KeyPersonName, KeyPersonContact, address, company } = branchDetails;
     const [coverIndex, setCoverIndex] = useState(0);
 
-    console.log('branchDetails', branchDetails);
     const coverImages = branchDetails?.images || [];
     useEffect(() => {
         const interval = setInterval(() => {
@@ -17,15 +16,13 @@ const ServiceProvider = ({ branchDetails }) => {
     return (
         <div className="border border-gray-300 p-4 shadow-md rounded-lg overflow-hidden">
             <div className="relative mb-10">
-                {coverImages.length > 0 && (
                     <img
-                        src={coverImages[coverIndex].image}
+                        src={`${coverImages.length > 0 && coverImages[coverIndex] ? coverImages[coverIndex].image : '/Default_i_need_to_default_image_for_our_partners_for_my_web_ap_1.jpg'}`}
                         alt="Cover Image"
                         className="w-full h-40 object-cover rounded-t-lg"
                     />
-                )}
                 <div className="absolute top-[115px]  left-0 right-0 flex items-center justify-center">
-                    <img src={`${branchDetails.company.logo ?? '/icons8-shop-100.png'}`} alt={name} className="w-20 h-20 rounded-full bg-[#e6d8ef] p-1" />
+                    <img src={`${branchDetails.company.logo ?? '/icons8-shop-100.png'}`} alt='logo' className="w-20 h-20 rounded-full bg-[#e6d8ef] p-1" />
                 </div>
             </div>
 

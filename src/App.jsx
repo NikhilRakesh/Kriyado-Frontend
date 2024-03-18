@@ -38,6 +38,7 @@ import ProtectedRoute from './components/RouteProtectors/AuthProtector'
 import { useSelector } from 'react-redux'
 import UsersNotification from './components/users/UsersNotification'
 import Pricing from './components/users/Pricing'
+import UserRegiterationPage from './components/users/UserRegiterationPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -52,6 +53,7 @@ function App() {
     <>
       <Routes>
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/user-register" element={<UserRegiterationPage />} />
         <Route path="/admin-home" element={isAdminAuthenticated && adminUser?.type === 'admin' ? (<AdminHome />) : (<Navigate to="/login" replace />)}>
           <Route path="" element={<AdminGraph />} />
           <Route path="add-package" element={<AdminAddPackage />} />

@@ -6,7 +6,6 @@ const UserProfileModal = ({ close, data }) => {
         customerId: "123456",
         profileImage: "/man.png"
     };
-
     const handleCloseModal = () => {
         close();
     };

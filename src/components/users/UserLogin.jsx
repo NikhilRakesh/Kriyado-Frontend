@@ -33,7 +33,7 @@ const UserLogin = () => {
         if (!emailError && !passwordError) {
             try {
                 const response = await api.post('/user/login/', { username: email, password });
-                if (response.status === 200) {
+                if (response?.status === 200) {
                     if (response.data.type === 'user') {
                         dispatch(loginAction(response.data));
                         navigate('/')
@@ -46,7 +46,7 @@ const UserLogin = () => {
                 }
             } catch (error) {
                 console.log(error);
-                if (error.response.status === 307) {
+                if (error?.response?.status === 307) {
                     setverify(error.response.data.user)
                     setopemodal(true)
                 } else {
