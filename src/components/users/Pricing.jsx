@@ -11,12 +11,45 @@ const Pricing = () => {
 
     const [packageType, setPackageType] = useState('BASIC')
     const [packages, setpackages] = useState([])
+    const [Data, setData] = useState({
+        name: '',
+        number: '',
+        district: '',
+        state: '',
+        address: '',
+        dob: '',
+        email_id: '',
+        pincode: '',
+        country: ''
+    });
 
     const user = useSelector(state => state.auth.user);
 
     useEffect(() => {
         fetchPackages()
+        fetchUserData()
     }, [packageType])
+
+    const fetchUserData = async () => {
+        try {
+            const response = await get_api(user?.token).get('/shop/customer/detail_update/user/');
+            if (response.status === 200) {
+                setData(response.data)
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
 
     const fetchPackages = async () => {
         try {
@@ -59,8 +92,12 @@ const Pricing = () => {
         });
     }
 
-    const displayRazorpayPaymentSdk = async () => {
+    const displayRazorpayPaymentSdk = async (id) => {
         try {
+            if (Data?.is_expired === false) {
+                toast.error("You can't purchase a new package until your current one expires.");
+                return
+            }
             const res = await loadRazorpayScript(
                 "https://checkout.razorpay.com/v1/checkout.js"
             );
@@ -72,7 +109,7 @@ const Pricing = () => {
 
             try {
                 const result = await get_api(user?.token).post("payment/razorpay_order/", {
-                    "package_id": "1"
+                    "po_id": id
                 });
 
                 if (!result) {
@@ -92,7 +129,7 @@ const Pricing = () => {
                     order_id: orderId,
                     handler: async function (Response) {
                         try {
-                            const response = await api.post('/payment/razorpay_callback/', { Response })
+                            const response = await get_api(user?.token).post('/payment/razorpay_callback/', { Response })
                             console.log('/payment/razorpay_callback/', response);
                             if (response.status === 200) {
                                 toast.success('Successfully toasted!')
@@ -127,12 +164,31 @@ const Pricing = () => {
                         console.log('/payment/razorpay_callback/', responseFromServer);
                     } catch (error) {
                         console.log(error);
+                        const errorMessages = getErrorMessage(error)
+                        const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                        if (generalErrors.length >= 0) {
+                            const newErrors = generalErrors.map(error => error.message);
+                            newErrors.forEach(error => toast.error(error));
+                            return newErrors;
+                        }
+                        else if (error.message) {
+                            toast.error(`${error.message || 'Somthing went wrong'}`)
+                        }
                     }
                 });
 
             } catch (error) {
                 console.error("Error:", error);
-                toast.error("An error occurred. Please try again later.");
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
 
             return (
@@ -199,21 +255,11 @@ const Pricing = () => {
                     (<div className='md:grid md:grid-cols-3 md:gap-8 py-8 '>
                         {packages?.map((pkg, index) => (
                             <div key={pkg?.id}>
-                                <SubscriptionCard data={pkg} />
+                                <SubscriptionCard data={pkg} displayRazorpayPaymentSdk={displayRazorpayPaymentSdk} />
                             </div>
                         ))}
                     </div>)
                 }
-
-
-                <div className='flex justify-center'>
-                    <button
-                        className='bg-purple-500 text-white px-4 py-2 rounded-md font-semibold'
-                        onClick={displayRazorpayPaymentSdk}
-                    >
-                        Pay with Razorpay
-                    </button>
-                </div>
 
             </div>
             <Toaster />

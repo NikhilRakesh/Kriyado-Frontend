@@ -1,10 +1,10 @@
 import React from 'react';
 import './SubscriptionCard.css';
 
-const SubscriptionCard = ({ data }) => {
-    
-    const activeCategories = data?.package_detail?.categories.filter(category => category.is_active);
+const SubscriptionCard = ({ data, displayRazorpayPaymentSdk }) => {
 
+    const activeCategories = data?.package_detail?.categories.filter(category => category.is_active);
+    
     return (
         <div className="subscription-card-container ">
             <div className="subscription-card bg-[#fbe6fb] rounded-md p-6 shadow-md mb-5 md:w-[390px] cursor-pointer border border-gray-300">
@@ -30,7 +30,7 @@ const SubscriptionCard = ({ data }) => {
                     </ul>
                 </div>
                 <div className='flex pt-6'>
-                    <button className="bg-[#9F5080] text-white px-4 py-2 rounded-md font-semibold">Subscribe Now</button>
+                    <button className="bg-[#9F5080] text-white px-4 py-2 rounded-md font-semibold" onClick={() => { displayRazorpayPaymentSdk(data.id) }}>Subscribe Now</button>
                 </div>
             </div>
         </div>

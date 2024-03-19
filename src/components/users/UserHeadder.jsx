@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import UserHeadderNav from './UserHeadderNav';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import UserProfileModal from './UserProfileModal';
 import { get_api } from '../../utils/api';
 import { getErrorMessage } from '../../utils/Validation';
 import toast, { Toaster } from 'react-hot-toast';
+import { logout } from '../../Reducer/authReducer';
 
 const UserHeadder = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileOpen, setisProfileOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [userProfileData, setuserProfileData] = useState('');
+    const [notificationCount, setnotificationCount] = useState(0);
 
     const user = useSelector(state => state.auth.user);
+    const Dispatch = useDispatch()
 
     useEffect(() => {
         fetchProfileData()
+        fetchNotificationCountInitial()
+        fetchnotificationCount()
     }, [isProfileOpen])
 
     const toggleDropdown = () => {
@@ -52,7 +57,52 @@ const UserHeadder = () => {
             }
         }
     }
+    const fetchnotificationCount = async () => {
+        const socket = new WebSocket('ws://192.168.1.7:8000/ws/notifications/user/');
 
+        socket.onopen = () => {
+            console.log('WebSocket connection opened.');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            setnotificationCount(notificationCount + data.increment);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed.');
+        };
+
+        return () => {
+            socket.close();
+        };
+    }
+    const fetchNotificationCountInitial = async () => {
+        try {
+            const response = await get_api(user?.token).get(`/shop/notification/count/user/`);
+            if (response.status === 200) {
+                setnotificationCount(response?.data?.notification_count)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+    const onClickFuntion = () => {
+        setnotificationCount(0)
+    }
+    const Onlogout = () => {
+        Dispatch(logout())
+    }
 
     return (
         <div className='bg-white shadow-lg m-6 rounded-lg'>
@@ -82,7 +132,7 @@ const UserHeadder = () => {
                     <div className='flex flex-col md:flex-row md:space-x-4 items-center mt-4 md:mt-0' onClick={handleMenuToggle} >
                         <UserHeadderNav icon='/home.png' text='Home' to='/' />
                         <UserHeadderNav icon='/heart (1).png' text='Partner' to='/Partners' />
-                        <UserHeadderNav icon='/bell (1).png' text='Notifications' to='/Users-Notification' />
+                        <UserHeadderNav icon='/bell (1).png' text='Notifications' to='/Users-Notification' notificationCount={notificationCount} onClickFuntion={onClickFuntion} />
                         <UserHeadderNav icon='/price-list.png' text='Pricing' to='Pricing' />
                     </div>
                     <div className="flex items-center ml-4 mt-4 md:mt-0 relative">
@@ -95,10 +145,13 @@ const UserHeadder = () => {
                             <img src="/down-arrow (1).png" alt="down-arrow" className="w-4" />
                         </button>
                         {isOpen && (
-                            <div className="absolute border top-full left-0 mt-1 bg-white shadow-md rounded-md w-36">
+                            <div className="absolute border top-full left-0 mt-1 bg-white shadow-md rounded-md w-36 z-10">
                                 <ul>
                                     <li>
                                         <a href="#" onClick={OpenProfile} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onClick={Onlogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</a>
                                     </li>
                                 </ul>
                             </div>

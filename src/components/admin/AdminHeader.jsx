@@ -2,10 +2,21 @@ import React, { useState } from 'react';
 import AdminHeadNavItem from './AdminHeadNavItem';
 import logo from '/Kriyado Black Logo.png'
 import { Link } from 'react-router-dom';
+import { adminLogout } from '../../Reducer/adminAuthReducer';
+import { useDispatch } from 'react-redux';
 
 const AdminHeader = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const dispatch = useDispatch();
 
+    const onLogout = () => {
+        dispatch(adminLogout());
+    };
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
     return (
         <div className='bg-white shadow-lg m-6 rounded-lg'>
             <div className='container mx-auto px-4 py-2 md:flex md:justify-between md:items-center'>
@@ -42,13 +53,24 @@ const AdminHeader = () => {
                         <AdminHeadNavItem icon='/bar-chart.png' text='Ads' to="/admin-home/add-Ads" />
                         <AdminHeadNavItem icon='/bell (1).png' text='Notifications' to="/admin-home/Notification" />
                     </div>
-                    <div className='flex items-center ml-4 mt-4 md:mt-0'>
+                    <div className='flex items-center ml-4 mt-4 md:mt-0 relative'>
                         <img src="/man.png" alt="profile" className='w-4' />
                         <div className='ml-2'>
                             <p className='text-xs'>Welcome Back</p>
                             <p>Kriyado Admin</p>
                         </div>
-                        <img src="/down-arrow (1).png" alt="down-arrow" className='w-4 ml-2' />
+                            <button onClick={toggleDropdown} className="ml-2 focus:outline-none">
+                                <img src="/down-arrow (1).png" alt="down-arrow" className="w-4" />
+                            </button>
+                            {isOpen && (
+                                <div className="absolute border top-full left-0 mt-1 bg-white shadow-md rounded-md w-36 z-10">
+                                    <ul>
+                                        <li>
+                                            <a href="#" onClick={onLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                     </div>
                 </div>
             </div>

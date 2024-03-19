@@ -116,6 +116,7 @@ const UserProfile = () => {
                 <EditProfileModal isOpen={isOpen} onClose={onClose} data={Data} setData={setData} />
                 <Toaster />
                 {Data.image === null && <ProfileImageModal close={handleCloseModal} id={Data.id} />}
+                {packageExpired && <ExpiryModal />}
             </div>
         )
 }
