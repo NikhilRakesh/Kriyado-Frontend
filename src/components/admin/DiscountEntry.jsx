@@ -272,7 +272,7 @@ const DiscountEntry = () => {
                         <button className='bg-[#9F5080] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md' onClick={handleNextClick}>Next</button>
                     )
                         :
-                        (<button className='bg-[#9F5080] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md' onClick={handleApiCall}>Next1</button>)
+                        (<button className='bg-[#9F5080] py-2 text-sm 3/12 text-white mb-2 px-14 rounded-md' onClick={handleApiCall}>Next</button>)
                     }
                 </div>
                 <Toaster />

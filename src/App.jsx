@@ -18,7 +18,6 @@ import AddBranch from './components/ventors/AddBranch'
 import AddBranchForm from './components/ventors/AddBranchForm'
 import VentorProfile from './components/ventors/VentorProfile'
 import UserProfile from './components/users/UserProfile'
-import UserPartners from './components/users/userPartners'
 import MorePartners from './components/users/MorePartners'
 import VentorBranchDetails from './components/ventors/VentorBranchDetails'
 import AdminGraph from './components/admin/AdminGraph'
@@ -39,6 +38,7 @@ import { useSelector } from 'react-redux'
 import UsersNotification from './components/users/UsersNotification'
 import Pricing from './components/users/Pricing'
 import UserRegiterationPage from './components/users/UserRegiterationPage'
+import UserPartners from './components/users/UserPartners'
 
 function App() {
   const [count, setCount] = useState(0)

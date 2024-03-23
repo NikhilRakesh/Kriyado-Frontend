@@ -25,7 +25,7 @@ const BranchDeatils = () => {
 
     const { id } = useParams();
 
-        const user = useSelector(state => state.adminAuth.adminUser)
+    const user = useSelector(state => state.adminAuth.adminUser)
 
     const navigate = useNavigate()
 
@@ -212,6 +212,10 @@ const BranchDeatils = () => {
                 toast.error(`${error.message || 'Somthing went wrong'}`)
             }
         }
+    }
+    
+    const Skip = () => {
+        navigate(`/admin-home/add-Parnter/Discount-Entry/${id}`);
     }
 
     return (
@@ -414,6 +418,7 @@ const BranchDeatils = () => {
                         <div className='flex  mt-4'>
                             <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more</button>
                             <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>
+                            <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={Skip}>Skip</button>
                         </div>
                     </div>
                 </div>
