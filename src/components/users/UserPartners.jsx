@@ -61,18 +61,19 @@ const UserPartners = () => {
     }
 
 
-    const searchFilter = async () => {  
-        if (Value && !seletedCategories) {
+    const searchFilter = async () => {
+        if (Value !== '' && seletedCategories === '') {
             setinputFocous(false)
             try {
                 const response = await get_api(user?.token).get(`/shop/vendor/branches/customer/?search=${Value}`);
-                console.log(response);
                 if (response.status === 200 && response.data.length >= 0) {
                     setData(response.data);
                     setValue('')
+                    setseletedCategories('')
                 } else {
                     toast.error("This didn't work.")
                     setValue('')
+                    setseletedCategories('')
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -87,15 +88,17 @@ const UserPartners = () => {
                     toast.error(`${error.message || 'Somthing went wrong'}`)
                 }
             }
-        } else if (seletedCategories && !Value) {
+        } else if (seletedCategories !== '' && Value == '') {
             try {
                 const response = await get_api(user?.token).get(`/shop/vendor/branches/customer/?category__name=${seletedCategories}`);
                 if (response.status === 200 && response.data.length >= 0) {
                     setData(response.data);
                     setseletedCategories('')
+                    setValue('')
                 } else {
                     toast.error("This didn't work.")
                     setseletedCategories('')
+                    setValue('')
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
