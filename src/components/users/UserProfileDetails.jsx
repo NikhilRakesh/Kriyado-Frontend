@@ -26,7 +26,7 @@ const UserProfileDetails = ({ data, onOpen }) => {
         <div className='md:flex '>
             <div className='m-2 p-2 w-full md:w-8/12 '>
                 <div className='md:flex  mb-5 justify-between'>
-                    <div className='px-2 w-4/12' >
+                    <div className='md:px-2 w-5/12 ' >
                         <h1 className='font-bold text-black sm:p-1 '>My Profile</h1>
                         <p className='text-[10px] font-sans sm:p-1'>Customer ID</p>
                         <p className='text-xs font-sans  font-thin sm:p-1'><span>CID </span>{data?.customer_id}</p>

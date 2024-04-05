@@ -132,8 +132,9 @@ const DiscountEntry = () => {
             toast.error('Please fill the field.')
             return
         }
-        if (nextChecker === DiscountsData.length && nextChecker != 0) {
+        if (nextChecker === DiscountsData.length && nextChecker != 0 || DiscountsData.length === 0) {
             toast.error('please add atleast a offer')
+            return
         }
         setbranch({
             discount_type: "",
@@ -162,7 +163,6 @@ const DiscountEntry = () => {
             }
         }
     }
-
     return BranchData.length === 0 ?
         <div>
             <DiscountEntrySkelton />

@@ -160,7 +160,7 @@ const UserLogin = () => {
                 </div>
             </div>
             <Toaster />
-            {/* {opemodal && <VerificationModal close={closeModal} verifyApi={verifyApi} />} */}
+            {opemodal && <VerificationModal close={closeModal} verifyApi={verifyApi} />}
         </div>
     );
 };
