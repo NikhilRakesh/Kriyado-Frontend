@@ -89,7 +89,7 @@ const UserProfile = () => {
             <SkeltonLoading />
             {packageExpired && <ExpiryModal />}
         </div>
-        : (
+        : ( 
             <div>
                 <div className='md:absolute md:top-0 md:right-0 md:mt-28 '>
                     <div className='relative'>

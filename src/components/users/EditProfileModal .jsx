@@ -50,16 +50,16 @@ const EditProfileModal = ({ isOpen, onClose, data, setData }) => {
                     <div className='md:flex gap-8'>
                         <div className='md:w-8/12'>
                             <input required type="text" name='name' value={formData?.name} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
-                            <input required type="text" name='number' value={formData?.number} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
-                            <input required type="text" name='district' value={formData?.district} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
-                            <input required type="text" name='state' value={formData?.state} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
+                            <input required type="text" name='number' value={formData?.number} onChange={handleChange} placeholder="Mobile number" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
+                            <input required type="text" name='district' value={formData?.district} onChange={handleChange} placeholder="District" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
+                            <input required type="text" name='state' value={formData?.state} onChange={handleChange} placeholder="State" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
                             <input required type="text" name='address' value={formData?.address} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
                         </div>
                         <div className='md:w-8/12'>
-                            <input required type="text" name='dob' value={formData?.dob} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
-                            <input required type="text" name='email_id' value={formData?.email_id} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
-                            <input required type="text" name='pincode' value={formData?.pincode} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
-                            <input required type="text" name='country' value={formData?.country} onChange={handleChange} placeholder="Full Name" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
+                            <input required type="text" name='dob' value={formData?.dob} onChange={handleChange} placeholder="Dob" className="w-full mb-4 p-2 border outline-[#80509F] rounded-md" />
+                            <input required type="text" name='email_id' value={formData?.email_id} onChange={handleChange} placeholder="Email" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
+                            <input required type="text" name='pincode' value={formData?.pincode} onChange={handleChange} placeholder="pincode" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
+                            <input required type="text" name='country' value={formData?.country} onChange={handleChange} placeholder="country" className="w-full mb-4 p-2 outline-[#80509F] border rounded-md" />
                         </div>
                     </div>
                     <div className='md:flex justify-between gap-6 pt-10 '>
