@@ -16,6 +16,10 @@ const CreateCoustmer = () => {
     const [states] = useState(getStates());
     const [packages, setpackages] = useState([])
     const [isOPen, setisOPen] = useState(false)
+    const [packageDetail , setPackageDetail] = useState({
+        packageName : "Not Selected"
+
+    })
     const [emailError, setEmailError] = useState('');
     const [pincodeError, setPincodeError] = useState('');
     const [NumberError, setNumberError] = useState('');
@@ -149,6 +153,9 @@ const CreateCoustmer = () => {
                     image: null
                 })
                 setIsLoading(false)
+                setPackageDetail({
+                    packageName : "Not Selected"
+                })
                 toast.success('Customer successfully created');
             }
         } catch (error) {
@@ -185,7 +192,7 @@ const CreateCoustmer = () => {
                         <div className='py-2 '>
                             {/* <Dropdown text="Choose Package" p="3" textcolor="text-gray-400" font="font-thin" data={packages} onUpdate={updatePackage} /> */}
                             {/* <input type="text"  value={formData.package} className='border outline-[#80509F] text-sm border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter package" /> */}
-                            <button type='button' onClick={() => { setisOPen(true) }} className='border border-gray-200 text-sm outline-[#80509F] py-3 w-full bg-gray-100 text-start px-2 text-gray-400'><p >{formData.package != '' ? 'package selected' : 'Add package'}</p></button>
+                            <button type='button' onClick={() => { setisOPen(true) }} className={`border border-gray-200 text-sm outline-[#80509F] py-3 w-full bg-gray-100 text-start px-2 ${packageDetail.packageName=="Not Selected" ? "text-gray-400" : ""}`}><p >{packageDetail.packageName}</p></button>
                         </div>
                     </div>
                     <div>
@@ -211,7 +218,7 @@ const CreateCoustmer = () => {
                     <div>
                         <p className='text-xs  text-gray-400'>Date of Birth</p>
                         <div className='py-2'>
-                            <input type="date" name='dob' value={formData.dob} onChange={handleInputChange} required className='border text-sm outline-[#80509F] text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
+                            <input type="date" name='dob' value={formData.dob} onChange={handleInputChange} required className={`border text-sm outline-[#80509F] ${formData.dob ? "" : "text-gray-400"}  border-gray-200 p-3 w-full rounded-sm bg-gray-100`} placeholder="Enter name" />
                         </div>
                     </div>
 
@@ -222,7 +229,7 @@ const CreateCoustmer = () => {
                     <div>
                         <p className='text-xs text-gray-400'>District</p>
                         <div className='py-2'>
-                            <Dropdown text="Choose District" p="3" textcolor="text-gray-400" data={keralaDistricts} onUpdate={updateDistrict} />
+                            <Dropdown text="Choose District" p="3" textcolor={`${formData.district ? "text-dark" : "text-gray-400"}`} data={keralaDistricts} onUpdate={updateDistrict} />
                         </div>
                     </div>
                     <div>
@@ -242,13 +249,13 @@ const CreateCoustmer = () => {
                         <div className='w-full'>
                             <p className='text-xs text-gray-400'>State</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose State" p="3" textcolor="text-gray-400" data={states} onUpdate={updateState} />
+                                <Dropdown text="Choose State" p="3" textcolor={`${formData.state ? "text-dark" : "text-gray-400"}`} data={['Kerela']} onUpdate={updateState} />
                             </div>
                         </div>
                         <div className='w-full'>
                             <p className='text-xs text-gray-400'>Country</p>
                             <div className='py-2 '>
-                                <Dropdown text="Choose Country" p="3" textcolor="text-gray-400" data={['India']} onUpdate={updateCountry} />
+                                <Dropdown text="Choose Country" p="3" textcolor={`${formData.country ? "text-dark" : "text-gray-400"}`} data={['India']} onUpdate={updateCountry} />
                             </div>
                         </div>
                     </div>
@@ -287,7 +294,7 @@ const CreateCoustmer = () => {
                 </div>
             </form>
             {isLoading && <LoadingSpinners />}
-            <CustmorPackageModal packages={packages} isOpen={isOPen} onClose={onCloseModal} updatePackageInFormData={updatePackageInFormData} />
+            <CustmorPackageModal packages={packages} isOpen={isOPen} onClose={onCloseModal} setPackage={setPackageDetail} updatePackageInFormData={updatePackageInFormData} />
             <Toaster />
         </div>
     )

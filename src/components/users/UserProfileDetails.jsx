@@ -118,7 +118,7 @@ const UserProfileDetails = ({ data, onOpen }) => {
                 </div>
             </div>
             <div className='m-2 p-2 w-full  md:w-4/12 flex flex-col justify-between '>
-                <div className='border p-5  shadow-sm'>
+                {/* <div className='border p-5  shadow-sm'>
                     <div className='p-1 pb-0'>
                         <p className='text-[10px]'>Legal</p>
                     </div>
@@ -134,7 +134,7 @@ const UserProfileDetails = ({ data, onOpen }) => {
                             <p className='text-[10px] font-bold'>View</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className='rounded-sm'>
                     <img src="/ad-area@2x.png" alt="" />
                 </div>

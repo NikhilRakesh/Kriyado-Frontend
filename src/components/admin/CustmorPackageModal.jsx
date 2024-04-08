@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
-const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormData }) => {
+const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormData , setPackage }) => {
 
     const [selectedType, setSelectedType] = useState({});
 
-    const handleTypeSelect = (typeData) => {
-        setSelectedType(typeData);
-        updatePackageInFormData(typeData.id);
+    const handleTypeSelect = (typeData , name) => {
+        setSelectedType({
+            ...typeData,
+            name:name
+        });
+        
     };
+
+    const handle_purchase = ()=>{
+        if (!selectedType.id){
+            toast.error("select a package")
+            return
+        }
+        
+        updatePackageInFormData(selectedType.id);
+
+        if (setPackage){
+            setPackage({
+                packageName : `${selectedType.name} , ${selectedType.duration_days} days`
+            })
+
+            onClose()
+        }
+
+
+    }
 
     return (
         <div className={`fixed z-10 inset-0 overflow-y-auto ${isOpen ? 'block' : 'hidden'}`}>
@@ -17,7 +40,7 @@ const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormDat
                 </div>
                 <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg w-full">
                     <div className="bg-[#80509F] px-4 py-5 sm:px-6">
-                        <h3 className="text-lg font-medium leading-6 text-white">Choose Package</h3>
+                        <h3 className="text-lg font-medium leading-6 text-center text-white">CHOOSE PACKAGE</h3>
                     </div>
                     <div className="bg-white px-4 py-4 sm:px-6">
                         <div className="flex flex-col gap-4">
@@ -40,7 +63,7 @@ const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormDat
                                                         id={`type_${typeData.id}`}
                                                         value={typeData.id}
                                                         checked={selectedType && selectedType.id === typeData.id}
-                                                        onChange={() => handleTypeSelect(typeData)}
+                                                        onChange={() => handleTypeSelect(typeData , pkg.name)}
                                                     />
                                                 </div>
                                             ))}
@@ -51,7 +74,10 @@ const CustmorPackageModal = ({ isOpen, onClose, packages, updatePackageInFormDat
                     </div>
                     <div className="bg-gray-100 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button onClick={onClose} type="button" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#80509F] text-base font-medium text-white hover:bg-[#674081] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#80509F] sm:ml-3 sm:w-auto sm:text-sm">
-                            Close
+                            CLOSE
+                        </button>
+                        <button onClick={handle_purchase} type="button" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#80509F] text-base font-medium text-white hover:bg-[#674081] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#80509F] sm:ml-3 sm:w-auto sm:text-sm">
+                            PURCHASE
                         </button>
                     </div>
                 </div>

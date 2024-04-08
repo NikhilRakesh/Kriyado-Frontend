@@ -58,7 +58,7 @@ const UserHeadder = () => {
         }
     }
     const fetchnotificationCount = async () => {
-        const socket = new WebSocket('ws://192.168.1.7:8000/ws/notifications/user/');
+        const socket = new WebSocket('ws://192.168.1.6:8000/ws/notifications/user/');
 
         socket.onopen = () => {
             console.log('WebSocket connection opened.');

@@ -193,7 +193,6 @@ const BranchDeatils = () => {
                     NormalWorkingHoursFrom: '',
                     NormalWorkingHoursTo: '',
                     image: [],
-                    head_office_address: '',
                     HomeDelivery: '',
                     sales_type: '',
                     company: '',
@@ -290,15 +289,15 @@ const BranchDeatils = () => {
 
                     <div className='w-4/12 flex flex-col justify-center'>
                         <p className='text-xs text-gray-400'>Country</p>
-                        <Dropdown text="Choose Country" p='3' font="font-normal" textcolor="text-gray-400" data={["India"]} onUpdate={updateCountry} />
+                        <Dropdown text="Choose Country" p='3' font="font-normal" textcolor={`${formData2.country ? "text-dark" : "text-gray-400"}`} data={["India"]} onUpdate={updateCountry} />
                     </div>
                     <div className='w-4/12 flex flex-col justify-center'>
                         <p className='text-xs text-gray-400'>District</p>
-                        <Dropdown text="Choose District" p='3' font="font-normal" textcolor="text-gray-400" data={districts} onUpdate={updateDistrict} />
+                        <Dropdown text="Choose District" p='3' font="font-normal" textcolor={`${formData2.District ? "text-dark" : "text-gray-400"}`} data={districts} onUpdate={updateDistrict} />
                     </div>
                     <div className='w-4/12 flex flex-col justify-center'>
                         <p className='text-xs text-gray-400'>State</p>
-                        <Dropdown text="Choose State" p='3' font="font-normal" textcolor="text-gray-400" data={states} onUpdate={updateState} />
+                        <Dropdown text="Choose State" p='3' font="font-normal" textcolor={`${formData2.State ? "text-dark" : "text-gray-400"}`} data={["Kerela"]} onUpdate={updateState} />
                     </div>
 
                 </div>
@@ -334,7 +333,7 @@ const BranchDeatils = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Select category</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose Category" p='3' font="font-normal" onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)} textcolor="text-gray-400" />
+                                <Dropdown text="Choose Category" p='3' font="font-normal" onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)} textcolor={`${formData2.category ? "text-dark" : "text-gray-400"}`} />
                             </div>
                         </div>
                     </div>
@@ -374,9 +373,7 @@ const BranchDeatils = () => {
                     <div className='w-6/12'>
                         <p className='text-xs text-gray-400'>Photos of store</p>
                     </div>
-                    <div className='w-6/12'>
-                        <p className='text-xs text-gray-400'>Head Office Address</p>
-                    </div>
+                   
                 </div>
 
                 <div className='flex gap-6 mt-2 '>
@@ -412,9 +409,7 @@ const BranchDeatils = () => {
 
                     </div>
                     <div className='w-6/12 '>
-                        <div className=''>
-                            <input type="text" name='head_office_address' value={formData2.head_office_address} onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
-                        </div>
+                       
                         <div className='flex  mt-4'>
                             <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more</button>
                             <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>

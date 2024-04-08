@@ -1,41 +1,50 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { getErrorMessage, validatePincode } from '../../utils/Validation';
+import { useFormData, useFormData2, getCities, getStates, keralaDistricts } from '../../utils/formData';
+import { useNavigate, useParams } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { get_api, get_api_form } from '../../utils/api';
 import CoustomInput from '../admin/CoustomInput';
-import { useFormData, getCities, getStates, keralaDistricts } from '../../utils/formData';
-import { validateEmail, validatePincode, ValiatePhoneNumber } from '../../utils/Validation';
 import Dropdown from '../admin/Dropdown';
 
 
 const AddBranchForm = () => {
 
     const [checkedOption, setCheckedOption] = useState(null);
-    const [formData, setFormData] = useState({})
+    const [formData2, setFormData2] = useFormData2()
     const [imageError, setimageError] = useState('');
+    const [pincodeError, setPincodeError] = useState('');
     const [districts] = useState(keralaDistricts);
     const [states] = useState(getStates());
-    const [pincodeError, setPincodeError] = useState('');
-
+    const [checkedOption2, setCheckedOption2] = useState('Both');
+    const [Categories, setCategories] = useState([]);
+    const [effect, setEffect] = useState(true);
 
     const addImage = useRef(null);
 
-    const handleClickAddimg = () => {
-        addImage.current.click();
-    };
+    const { id } = useParams();
 
-    const handleInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
+    const user = useSelector(state => state.vendorAuth.vendor)
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        fetchCategories()
+        setFormData2({
+            ...formData2,
+            company: user.company_id,
         });
-    };
+    }, [effect])
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
         setCheckedOption(value);
-        setFormData(prevState => ({
+        setFormData2(prevState => ({
             ...prevState,
             HomeDelivery: value,
         }));
-    };
+    }
 
     const handleChangeImage = (event) => {
         if (event.target.files.length > 2) {
@@ -43,48 +52,55 @@ const AddBranchForm = () => {
             return;
         }
         const selectedImages = Array.from(event.target.files).map((file) => file);
-        setFormData({
-            ...formData,
-            Photosofstore: selectedImages,
+        setFormData2({
+            ...formData2,
+            image: selectedImages,
         });
         setimageError('')
+    }
+
+    const handleClickAddimg = () => {
+        addImage.current.click();
+    }
+
+    const handleInputChange = (event) => {
+        setFormData2({
+            ...formData2,
+            [event.target.name]: event.target.value,
+        });
+    }
+
+    const handleRemoveImage = (index) => {
+        setFormData2((prevState) => ({
+            ...prevState,
+            image: prevState.image.filter((_, i) => i !== index),
+        }));
     };
 
-    const handleSubmitForForm = (event) => {
+    const Onsubmit = async (event) => {
         event.preventDefault();
         if (imageError) {
             return;
         }
-        console.log(formData);
+        try {
+            const response = await get_api_form(user?.token).post('/shop/vendor/branches/create/', formData2);
+            if (response.status === 201) {
+                toast.success('Branch added successfuly')
+                navigate(`/vendors/add-Branch/Discount-Entry/${user.company_id}`);
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
     }
-
-    const updateDistrict = (newDistrict) => {
-        setFormData(prevState => ({
-            ...prevState,
-            District: newDistrict,
-        }));
-    };
-
-    const updateState = (State) => {
-        setFormData(prevState => ({
-            ...prevState,
-            State: State,
-        }));
-    };
-
-    const updateCountry = (Country) => {
-        setFormData(prevState => ({
-            ...prevState,
-            country: Country,
-        }));
-    };
-
-    const handleRemoveImage = (index) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            Photosofstore: prevState.Photosofstore.filter((_, i) => i !== index),
-        }));
-    };
 
     const onblur = (event) => {
         if (event.target.name === "PinCode") {
@@ -92,33 +108,177 @@ const AddBranchForm = () => {
         }
     }
 
+    const updateDistrict = (newDistrict) => {
+        setFormData2(prevState => ({
+            ...prevState,
+            District: newDistrict,
+        }));
+    };
 
+    const updateState = (State) => {
+        setFormData2(prevState => ({
+            ...prevState,
+            State: State,
+        }));
+    };
+
+    const updateCountry = (Country) => {
+        setFormData2(prevState => ({
+            ...prevState,
+            country: Country,
+        }));
+    };
+
+    const handleCheckboxChange2 = (event) => {
+        const value = event.target.value;
+        setCheckedOption2(value);
+        setFormData2(prevState => ({
+            ...prevState,
+            sales_type: value,
+        }));
+    };
+
+    const updateCategory = (Category) => {
+        const category = Categories.find(category => category.name === Category);
+        setFormData2(prevState => ({
+            ...prevState,
+            category: category.id,
+        }));
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await get_api(user?.token).get('/shop/categories/');
+            if (response.status === 200) {
+                setCategories(response?.data)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    };
+
+    const addMore = async () => {
+        if (imageError) {
+            return;
+        }
+        try {
+            const response = await get_api_form(user?.token).post('/shop/vendor/branches/create/', formData2);
+            if (response.status === 201) {
+                toast.success('Branch added successfuly')
+                setFormData2({
+                    PinCode: '',
+                    Locality: '',
+                    Town: '',
+                    District: '',
+                    State: '',
+                    country: '',
+                    KeyPersonName: '',
+                    KeyPersonContact: '',
+                    Landphone: '',
+                    RegisteredAddress: '',
+                    website: '',
+                    google_map_link: '',
+                    NormalWorkingHoursFrom: '',
+                    NormalWorkingHoursTo: '',
+                    image: [],
+                    head_office_address: '',
+                    HomeDelivery: '',
+                    sales_type: '',
+                    company: '',
+                });
+                setEffect(prevState => !prevState);
+            }
+        } catch (error) {
+            console.log(error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+
+    // const Skip = () => {
+    //     navigate(`/admin-home/add-Parnter/Discount-Entry/${id}`);
+    // }
 
     return (
         <div className='mt-5 mb-4'>
             <h1 className='font-bold'>Branch Details</h1>
-            <form className='mt-4' onSubmit={handleSubmitForForm} >
+            <form className='mt-4' onSubmit={Onsubmit}>
                 <div className='md:flex gap-6'>
 
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Key person name / Manager name' Placeholder='Enter' type='text' name='Keypersonname' onChange={handleInputChange} />
+                        <CoustomInput headder='Key person name / Manager name' value={formData2.KeyPersonName} Placeholder='Enter' required={true} type='text' name='KeyPersonName' onChange={handleInputChange} />
                     </div>
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Key Person Contact (Manager) Number' Placeholder='Enter' type='text' name='KeyPersonContact' onChange={handleInputChange} />
+                        <CoustomInput headder='Key Person Contact (Manager) Number' value={formData2.KeyPersonContact} Placeholder='Enter' required={true} type='text' name='KeyPersonContact' onChange={handleInputChange} />
                     </div>
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Locality' Placeholder='Enter' type='text' name='Locality' onChange={handleInputChange} />
+                        <CoustomInput headder='Locality' required={true} Placeholder='Enter' value={formData2.Locality} type='text' name='Locality' onChange={handleInputChange} />
                     </div>
 
                 </div>
 
                 <div className='md:flex gap-6'>
 
-                    <div className='md:w-8/12'>
-                        <CoustomInput headder='Registered Address' Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
+                    <div className='md:w-4/12'>
+                        <CoustomInput headder='Registered Address' required={true} value={formData2.RegisteredAddress} Placeholder='Enter' type='Address' name='RegisteredAddress' onChange={handleInputChange} />
                     </div>
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Pin Code' Placeholder='Enter' type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
+                        <p className='text-xs text-gray-400'>Business Type</p>
+                        <div className='flex pt-6'>
+                            <div className='flex w-2/4 gap-3'>
+                                <input
+                                    type="radio"
+                                    id="wholesale"
+                                    name="sales_type"
+                                    value="wholesale"
+                                    checked={checkedOption2 === 'wholesale'}
+                                    onChange={handleCheckboxChange2}
+                                />
+                                <label htmlFor="wholesale" className='text-sm text-gray-400'>wholesale</label>
+                            </div>
+                            <div className='flex w-2/4 gap-3'>
+                                <input
+                                    type="radio"
+                                    id="retail"
+                                    name="sales_type"
+                                    value="retail"
+                                    checked={checkedOption2 === 'retail'}
+                                    onChange={handleCheckboxChange2}
+                                />
+                                <label htmlFor="retail" className='text-sm text-gray-400'>Retail</label>
+                            </div>
+                            <div className='flex  gap-3'>
+                                <input
+                                    type="radio"
+                                    id="both"
+                                    name="sales_type"
+                                    value="both"
+                                    checked={checkedOption2 === 'both'}
+                                    onChange={handleCheckboxChange2}
+                                />
+                                <label htmlFor="retail" className='text-sm text-gray-400'>Both</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='md:w-4/12'>
+                        <CoustomInput headder='Pin Code' Placeholder='Enter' value={formData2.PinCode} required={true} type='text' name='PinCode' onChange={handleInputChange} onBlur={onblur} />
                         {pincodeError && (<p className='text-xs text-center text-red-500'>{pincodeError}</p>)}
                     </div>
 
@@ -144,18 +304,18 @@ const AddBranchForm = () => {
                 <div className='md:flex gap-6'>
 
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Town' Placeholder='Enter' type='text' name='Town' onChange={handleInputChange} />
+                        <CoustomInput headder='Town' Placeholder='Enter' value={formData2.Town} required={true} type='text' name='Town' onChange={handleInputChange} />
                     </div>
                     <div className='md:w-4/12'>
-                        <CoustomInput headder='Land phone' Placeholder='Enter Number' type='text' name='Landphone' onChange={handleInputChange} />
+                        <CoustomInput headder='Land phone' value={formData2.Landphone} Placeholder='Enter Number' type='text' name='Landphone' onChange={handleInputChange} />
                     </div>
                     <div className='md:w-4/12 flex'>
 
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Normal Working hours [from time, to time]</p>
                             <div className='py-2 flex gap-3'>
-                                <input type="time" name='NormalWorkinghoursFrom' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-                                <input type="time" name='NormalWorkinghoursTo' onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursFrom' value={formData2.NormalWorkingHoursFrom} onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                                <input type="time" name='NormalWorkingHoursTo' value={formData2.NormalWorkingHoursTo} onChange={handleInputChange} required className="border w-2/4 border-gray-300 outline-0 rounded-md px-3 py-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
                             </div>
                         </div>
                     </div>
@@ -165,8 +325,16 @@ const AddBranchForm = () => {
 
                 <div className='md:flex gap-6'>
 
-                    <div className='md:w-8/12'>
-                        <CoustomInput headder='Google Map link' Placeholder='Paste your Google Map link' type='text' name='GoogleMaplink' onChange={handleInputChange} />
+                    <div className='md:w-4/12'>
+                        <CoustomInput headder='Google Map link' value={formData2.google_map_link} required={false} Placeholder='Paste your Google Map link' type='text' name='google_map_link' onChange={handleInputChange} />
+                    </div>
+                    <div className='md:w-4/12'>
+                        <div className='w-full py-2'>
+                            <p className='text-xs text-gray-400'>Select category</p>
+                            <div className='py-2'>
+                                <Dropdown text="Choose Category" p='3' font="font-normal" onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)} textcolor="text-gray-400" />
+                            </div>
+                        </div>
                     </div>
                     <div className='md:w-4/12'>
                         <div className='w-full py-2'>
@@ -200,14 +368,20 @@ const AddBranchForm = () => {
 
                 </div>
 
-                <div className='md:flex gap-6 mt-2 '>
-                    <div className='md:w-6/12'>
-                    <div className='my-3'>
+                <div className='md:flex gap-6'>
+                    <div className='w-6/12'>
                         <p className='text-xs text-gray-400'>Photos of store</p>
                     </div>
-                        <div className='md:flex gap-6'>
-                            {formData && (formData?.Photosofstore?.map((img, index) => (
-                                <div className='md:w-2/6 h-[100px] shadow-lg  border mb-5 md:mb-0' key={index}>
+                    <div className='w-6/12'>
+                        <p className='text-xs text-gray-400'>Head Office Address</p>
+                    </div>
+                </div>
+
+                <div className='md:flex gap-6 mt-2 '>
+                    <div className='md:w-6/12'>
+                        <div className='flex gap-6'>
+                            {formData2 && (formData2?.image.map((img, index) => (
+                                <div className='w-2/6 h-[100px] shadow-lg  border' key={index}>
                                     <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt="" />
                                     <p className=' text-xs text-red-500 cursor-pointer' onClick={() => handleRemoveImage(index)}>Remove</p>
                                 </div>
@@ -235,21 +409,20 @@ const AddBranchForm = () => {
                         </div>
 
                     </div>
-                    <div className='md:w-6/12 mt-7 md:mt-0'>
-                    <div className='my-3'>
-                        <p className='text-xs text-gray-400'>Head Office Address</p>
-                    </div>
+                    <div className='md:w-6/12 '>
                         <div className=''>
-                            <input type="text" name='HeadOfficeAddress' onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                            <input type="text" name='head_office_address' value={formData2.head_office_address} onChange={handleInputChange} className='border outline-0 h-[100px] text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                         </div>
                         <div className='flex  mt-4'>
-                            <button className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Previous</button>
-                            <button type='submit' className='py-1 px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 '>Next</button>
+                            <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more</button>
+                            <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>
+                            {/* <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={Skip}>Skip</button> */}
                         </div>
                     </div>
                 </div>
 
             </form>
+            <Toaster />
         </div>
     )
 }

@@ -16,7 +16,7 @@ const Dropdown = ({ text, p, textcolor, font, data, onUpdate, textsize, bg }) =>
                 className={`${bg ? bg : 'bg-gray-100 border'}  border-gray-300 outline-[#80509F] w-full font-bold ${p ? `p-${p}` : 'py-2 px-4'} rounded inline-flex items-center`}
             >
                 <div className='flex items-center justify-between w-full'>
-                    <p className={`${font ? `${font}` : 'font-thin'} ${textcolor ? `${textcolor}` : 'text-gray-400'} ${textsize ? `${textsize}` : 'text-sm '}`}>
+                    <p className={`${font ? `${font}` : 'font-normal'} ${textcolor ? `${textcolor}` : 'text-gray-400'} ${textsize ? `${textsize}` : 'text-sm '}`}>
                         {selectedValue || text} {/* Display selected value or default text */}
                     </p>
                     <svg

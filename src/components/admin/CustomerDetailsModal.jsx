@@ -9,12 +9,13 @@ const CustomerDetailsModal = ({ isOpen, onClose, data, render, addPackage }) => 
 
     const [packages, setpackages] = useState([])
     const [isOPen, setisOPen] = useState(false)
+    const [rerender , setRender] = useState(false)
 
     const user = useSelector(state => state.adminAuth.adminUser)
 
     useEffect(() => {
         fetchPackages()
-    }, [])
+    }, [rerender])
 
     const fetchPackages = async () => {
         try {
@@ -68,6 +69,54 @@ const CustomerDetailsModal = ({ isOpen, onClose, data, render, addPackage }) => 
         setisOPen(false)
     }
 
+    const handle_force_verify = async (id)=>{
+        try {
+            const response = await get_api(user?.token).post(`/user/force_verify/${id}/`);
+            if (response.status === 201) {
+                toast.success('verified successfully')
+                data.is_active = true
+                setRender(!rerender)
+            }
+        } catch (error) {
+            console.error('Fetching categories failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                console.log(newErrors);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+
+    }
+
+    const handle_resend_verification = async (id)=>{
+        try {
+            const response = await get_api(user?.token).post(`/user/re_verify/${id}/`);
+            if (response.status === 201) {
+                toast.success('verification mail send successfully')
+            }
+        } catch (error) {
+            console.error('Fetching categories failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                console.log(newErrors);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+
+    }
+
 
     return (
         <div className={`fixed z-10 inset-0 overflow-y-auto ${isOpen ? 'block' : 'hidden'}`}>
@@ -75,29 +124,87 @@ const CustomerDetailsModal = ({ isOpen, onClose, data, render, addPackage }) => 
                 <div className="fixed inset-0 transition-opacity">
                     <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                 </div>
-                <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg w-full">
+                <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-1/2 w-full">
                     <div className="bg-[#80509F] px-4 py-5 sm:px-6">
-                        <h3 className="text-lg font-medium leading-6 text-white">Customer Details</h3>
+                        <h3 className="text-lg text-center font-medium leading-6 text-white">CUSTOMER DETAILS</h3>
                     </div>
-                    <div className='flex justify-center w-full px-5 py-3 '>
-                        <img src={data.image} alt="Customer" className="w-full h-auto" />
-                    </div>
+                    
                     <div className="bg-white px-4 py-4 sm:px-6 ">
                         <div className="space-y-4">
                             <div>
-                                <p className="font-semibold">Name: {data.name}</p>
-                                <p>Email: {data.email_id}</p>
-                                <p>Number: {data.number}</p>
-                                <p>Date of Birth: {data.dob}</p>
-                                <p>Address: {data.address}</p>
-                                <p>District: {data.district}</p>
-                                <p>State: {data.state}</p>
-                                <p>Country: {data.country}</p>
-                                <p>Pincode: {data.pincode}</p>
+                                <div className='flex gap-5 items-center justify-center'>
+
+                                    <div className='border p-2 hover:border-[#9F5080]'>
+                                        {data.image ? <img src={data.image} alt="Customer" className="w-full h-auto" /> : <img src="/man.png" alt="Customer" className="w-[100px] h-[100px] image-cover" />}
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-2xl">{data.name}</p>
+                                        <p>{data.email_id}</p>
+                                    </div>
+                                </div>
+
+                                <div className='flex gap-5 my-5'>
+                                    {!data.is_active && 
+                                    <>
+                                    <button className='bg-[#9F5080] text-white px-5 py-2 text-sm rounded-md' onClick={()=>handle_force_verify(data.user)}>Force Verify</button>
+                                    <button className='bg-[#9F5080] text-white px-5 py-2 text-sm rounded-md' onClick={()=>handle_resend_verification(data.user)}>Resend Verification</button>
+                                    
+                                    </>
+                                    
+                                    }
+                                </div>
+
+                                <div className='grid grid-cols-3 gap-4 my-5'>
+                                    <div>
+                                        <p className='font-bold mb-2'>Email</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.email_id}</p>
+                                    </div>
+                                    <div>
+                                        <p className='font-bold mb-2'>Number</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.number}</p>
+                                    </div>
+                                    <div>
+                                        <p className='font-bold mb-2'>Date of Birth</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.dob}</p>
+                                    </div>
+                                    <div className='col-span-2'>
+                                        <p className='font-bold mb-2'>Address</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.number}</p>
+                                    </div>
+                                    <div>
+                                        <p className='font-bold mb-2'>District</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.district}</p>
+                                    </div>
+                                    <div>
+                                        <p className='font-bold mb-2'>Pincode</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.pincode}</p>
+                                    </div>
+                                    <div>
+                                        <p className='font-bold mb-2'>State</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.state}</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <p className='font-bold mb-2'>Country</p>
+                                        <p className='border p-2 hover:border-[#9F5080]'> {data.country}</p>
+                                    </div>
+                                    
+                                   
+                                </div>
+                               
                             </div>
-                            {data.isActive ?
-                                (<div>
-                                    <h4 className="font-semibold">Packages:</h4>
+                            
+                                <div>
+                                    <div className='flex justify-between items-center mb-3'>
+                                        <h4 className="font-semibold">PACKAGES</h4>
+                                        {!data.isActive && data.is_active && 
+                                        
+                                        < div className='flex justify-center' >
+                                            <button className='bg-[#9F5080] text-white px-5 py-2 text-sm rounded-md' onClick={() => { setisOPen(true) }}><p >Add Package</p></button>
+                                        </div>
+                                        
+                                        }
+                                    </div>
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
                                             <tr>
@@ -105,6 +212,9 @@ const CustomerDetailsModal = ({ isOpen, onClose, data, render, addPackage }) => 
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration (days)</th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Date</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
@@ -114,16 +224,16 @@ const CustomerDetailsModal = ({ isOpen, onClose, data, render, addPackage }) => 
                                                     <td className="px-6 py-4 whitespace-nowrap">{pkg.package_price}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap">{pkg.package_duration}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap">{pkg.purchase_date}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">{pkg.expiry_date}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">{pkg.is_active ? <p className='bg-green-500 text-white p-2'>Active</p> : <p className='bg-red-500 p-2 text-white'>Expired</p>}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>)
-                                :
-                                (< div className='flex justify-center' >
-                                    <button className='bg-[#9F5080] text-white px-5 py-2 text-sm rounded-md' onClick={() => { setisOPen(true) }}><p >Add Package</p></button>
-                                </div>)
-                            }
+                                </div>
+                                
+                            
+                            
                         </div>
                     </div>
                     <div className="bg-gray-100 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

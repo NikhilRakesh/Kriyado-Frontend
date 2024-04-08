@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import VendorHeadder from './VentoHeadder'
 import { Outlet } from 'react-router-dom'
+import { useSelector } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
+import { getErrorMessage } from '../../utils/Validation';
+import { get_api } from '../../utils/api';
 
 const Ventors = () => {
+ 
   return (
     <div>
       <VendorHeadder />
@@ -17,6 +22,7 @@ const Ventors = () => {
         </div> */}
       </div>
       <Outlet />
+      <Toaster />
     </div>
   )
 }

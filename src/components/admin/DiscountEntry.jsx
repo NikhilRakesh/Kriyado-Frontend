@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState ,useRef} from 'react'
 import Dropdown from './Dropdown'
 import CoustomInput from './CoustomInput'
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,6 +9,13 @@ import { useSelector } from 'react-redux';
 import DiscountEntrySkelton from '../ResuableComponents/DiscountEntrySkelton';
 
 const DiscountEntry = () => {
+
+    const input1 = useRef()
+    const input2 = useRef()
+
+    const input3 = useRef()
+
+    const input4 = useRef()
 
     const [BranchData, setBranchData] = useState([])
     const [DiscountsData, setDiscountsData] = useState([])
@@ -56,13 +63,17 @@ const DiscountEntry = () => {
         }
     }
     const handleNextClick = () => {
-
         if (DiscountsData.length === 0) {
-            toast.error('please add atleast a offer')
+            toast.error('please add atleast a offer1')
             return
         } else if (nextChecker === DiscountsData.length && nextChecker != 0) {
             toast.error('please add atleast a offer')
         }
+        input1.current.value =""
+        input2.current.value =""
+        input3.current.value =""
+        input4.current.value =""
+
         setbuttonStatus([])
         setCurrentIndex(prevIndex => prevIndex + 1);
         setnextChecker(DiscountsData.length)
@@ -83,8 +94,10 @@ const DiscountEntry = () => {
             toast.error('Please fill the field.')
             return
         }
+        console.log(branch);
         if ((status === 'add1' && (radioButton === 'flat1' || radioButton === 'percentage1')) ||
             (status === 'add2' && (radioButton === 'flat2' || radioButton === 'percentage2'))) {
+                console.log("entered");
             setbuttonStatus(prevData => [...prevData, status]);
             setDiscountsData(prevData => [...prevData, branch]);
             setbranch({
@@ -127,11 +140,12 @@ const DiscountEntry = () => {
         }));
     };
     const handleApiCall = async () => {
-        const hasEmptyOffer = branch.offer === '';
-        if (hasEmptyOffer) {
-            toast.error('Please fill the field.')
-            return
-        }
+        console.log(DiscountsData);
+        // const hasEmptyOffer = branch.offer === '';
+        // if (hasEmptyOffer) {
+        //     toast.error('Please fill the field.')
+        //     return
+        // }
         if (nextChecker === DiscountsData.length && nextChecker != 0 || DiscountsData.length === 0) {
             toast.error('please add atleast a offer')
             return
@@ -200,7 +214,7 @@ const DiscountEntry = () => {
                             </div>
                         </div>
                         <div className='w-4/12 '>
-                            <CoustomInput required={true} headder='Total bill discount' name='offer' onChange={handleInputOffers} Placeholder='enter' type='text' />
+                            <CoustomInput required={true} headder='Total bill discount' ref={input1} name='offer' onChange={handleInputOffers} Placeholder='enter' type='text' />
                         </div>
                     </div>
                     <div className='flex justify-center'>
@@ -220,7 +234,7 @@ const DiscountEntry = () => {
                     <div className='my-5 flex gap-7 '>
                         <div className='w-4/12  '>
                             <div className=' flex '>
-                                <CoustomInput headder='Category' name='category' onChange={handleInputOffers} Placeholder='enter' type='text' />
+                                <CoustomInput headder='Category' name='category' ref={input2} onChange={handleInputOffers} Placeholder='enter' type='text' />
                             </div>
                         </div>
                         <div className='w-4/12 py-2 '>
@@ -238,7 +252,7 @@ const DiscountEntry = () => {
                         </div>
 
                         <div className='w-4/12 '>
-                            <CoustomInput headder='Value' onChange={handleInputOffers} name='offer' Placeholder='Choose' type='text' />
+                            <CoustomInput headder='Value' ref={input3} onChange={handleInputOffers} name='offer' Placeholder='Choose' type='text' />
                         </div>
                     </div>
                     <div className='flex justify-center'>
@@ -257,7 +271,7 @@ const DiscountEntry = () => {
                     )}
                     <div className='my-5'>
                         <div className='w-8/12 '>
-                            <CoustomInput headder='Offers' onChange={handleSpecialOffers} name='offer' Placeholder='Enter offers' type='text' />
+                            <CoustomInput headder='Offers' ref={input4} onChange={handleSpecialOffers} name='offer' Placeholder='Enter offers' type='text' />
                         </div>
                     </div>
                     <div className='flex justify-center'>

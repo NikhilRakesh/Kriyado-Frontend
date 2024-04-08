@@ -1,10 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PartnersRegistration from '../admin/PartnersRegistration'
 import VendorBranchList from './VentorBranchList'
 import VentorResgistration from './VentorResgistration'
+import { get_api } from '../../utils/api'
+import { getErrorMessage } from '../../utils/Validation'
+import toast, { Toaster } from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 
 
 const AddBranch = () => {
+
+    const [Branches, setBranches] = useState([])
+
+    const vendor = useSelector(state => state.vendorAuth.vendor);
+
+    useEffect(() => {
+        fetchBranches()
+    }, [])
+    const fetchBranches = async () => {
+        try {
+            const response = await get_api(vendor?.token).get('/shop/vendor/branches/');
+            if (response.status === 200) {
+                setBranches(response.data)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+
     return (
         <div className=' m-6 p-2 bg-gray-50 rounded-lg shadow-lg '>
             <div className='flex items-center justify-between'>
@@ -48,7 +81,7 @@ const AddBranch = () => {
                         </div>
 
                     </div>
-                    <VendorBranchList />
+                    <VendorBranchList Branches={Branches} />
                 </div>
 
                 <div className='md:w-9/12 border m-2 p-2  border-gray-300   rounded-sm'>
@@ -63,8 +96,8 @@ const AddBranch = () => {
                         <VentorResgistration />
                     </div>
                 </div>
-
             </div>
+            <Toaster />
         </div>
     )
 }

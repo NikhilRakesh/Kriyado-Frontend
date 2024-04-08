@@ -22,10 +22,10 @@ const MorePartnersDetails = ({ branchDetails }) => {
                     <ServicesCard branchDetails={branchDetails} />
                 </div>
 
-                <div className='mt-10'>
+                {/* <div className='mt-10'>
                     <LocationMap />
                 </div>
-
+ */}
 
                 <div className='shadow-sm mt-20'>
                     <div className='flex px-4'>

@@ -16,6 +16,7 @@ const UserPartners = () => {
     const [seletedCategories, setseletedCategories] = useState('')
     const [inputFocous, setinputFocous] = useState(false)
     const user = useSelector(state => state.auth.user);
+    const [isOpen, setIsOpen] = useState(false);
 
     const fetchUserData = async () => {
         try {
@@ -134,7 +135,9 @@ const UserPartners = () => {
         setValue(e.target.value);
         setseletedCategories('');
     };
-
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
 
     return (
         <div >
@@ -165,11 +168,9 @@ const UserPartners = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className='mt-5'>
                         <PartnersDeatails Data={Data} />
                     </div>
-
                 </div>
                 <div className='md:w-4/12 border shadow-md'>
                     <div className='  rounded-sm'>

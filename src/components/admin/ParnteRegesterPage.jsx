@@ -221,7 +221,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Name of Organization</p>
                             <div className='py-2'>
-                                <input type="text" name='organization' value={formData.organization} required onChange={handleInputChange} className='border outline-0 text-sm text-gray-400  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
+                                <input type="text" name='organization' value={formData.organization} required onChange={handleInputChange} className='border outline-0 text-sm  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter name" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -239,7 +239,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400 '>Select District</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose District" p='3' font="font-normal" textcolor="text-gray-400" data={districts} onUpdate={updateDistrict} />
+                                <Dropdown text="Choose District" p='3' font="font-normal" textcolor={`${formData.District ? "text-dark" : "text-gray-400"}`} data={districts} onUpdate={updateDistrict} />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -266,7 +266,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Select State</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose State" p='3' font="font-normal" textcolor="text-gray-400" data={states} onUpdate={updateState} />
+                                <Dropdown text="Choose State" p='3' font="font-normal" textcolor={`${formData.State ? "text-dark" : "text-gray-400"}`} data={["Kerela"]} onUpdate={updateState} />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -299,7 +299,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Select country</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose Country" p='3' font="font-normal" textcolor="text-gray-400" data={["India"]} onUpdate={updateCountry} />
+                                <Dropdown text="Choose Country" p='3' font="font-normal" textcolor={`${formData.country ? "text-dark" : "text-gray-400"}`} data={["India"]} onUpdate={updateCountry} />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -363,8 +363,8 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Select Category</p>
                             <div className='py-2'>
-                                <Dropdown text="Choose Category" p='3' onUpdate={updateCategory} data={Categories.filter(category => category.is_active).map(category => category.name)}
-                                    font="font-normal" textcolor="text-gray-400" />
+                                <Dropdown text="Choose Category" p='3' onUpdate={updateCategory} textcolor={`${formData.category ? "text-dark" : "text-gray-400"}`} data={Categories.filter(category => category.is_active).map(category => category.name)}
+                                    font="font-normal" />
                             </div>
                         </div>
                     </div>
@@ -377,7 +377,7 @@ const ParnteRegesterPage = () => {
                             <div className='py-2'>
                                 <input type="email" name='email_id'
                                     required onChange={handleInputChange}
-                                    className='border text-sm  text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100'
+                                    className='border text-sm  outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100'
                                     placeholder="Enter email"
                                     value={formData.email_id}
                                     onBlur={(e) => validateEmail(e.target.value, setEmailError)} />
@@ -387,7 +387,7 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Facebook link</p>
                             <div className='py-2'>
-                                <input type="text" value={formData.facebook_link} name='facebook_link' onChange={handleInputChange} className='border text-sm text-gray-400  outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" value={formData.facebook_link} name='facebook_link' onChange={handleInputChange} className='border text-sm   outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -402,13 +402,13 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Website</p>
                             <div className='py-2'>
-                                <input type="text" name='website' value={formData.website} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='website' value={formData.website} onChange={handleInputChange} className='border text-sm outline-0  border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Instagram link</p>
                             <div className='py-2'>
-                                <input type="text" name='instagram_link' value={formData.instagram_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='instagram_link' value={formData.instagram_link} onChange={handleInputChange} className='border text-sm outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
@@ -423,13 +423,13 @@ const ParnteRegesterPage = () => {
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Google Map link</p>
                             <div className='py-2'>
-                                <input type="text" name='google_map_link' value={formData.google_map_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='google_map_link' value={formData.google_map_link} onChange={handleInputChange} className='border text-sm outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>
                             <p className='text-xs text-gray-400'>Youtube link</p>
                             <div className='py-2'>
-                                <input type="text" name='youtube_link' value={formData.youtube_link} onChange={handleInputChange} className='border text-sm text-gray-400 outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
+                                <input type="text" name='youtube_link' value={formData.youtube_link} onChange={handleInputChange} className='border text-sm outline-0 border-gray-200 p-3 w-full rounded-sm bg-gray-100' placeholder="Enter" />
                             </div>
                         </div>
                         <div className='w-full py-2'>

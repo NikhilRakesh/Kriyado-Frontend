@@ -9,6 +9,7 @@ import { FaCheck } from 'react-icons/fa';
 import { adminLogin } from '../../Reducer/adminAuthReducer';
 import VerificationModal from './VerificationModal';
 import toast, { Toaster } from 'react-hot-toast';
+import { vendorlogin } from '../../Reducer/vendorAuthReducer';
 
 
 const UserLogin = () => {
@@ -41,6 +42,7 @@ const UserLogin = () => {
                         dispatch(adminLogin(response.data));
                         navigate('/admin-home')
                     } else if (response.data.type === 'vendor') {
+                        dispatch(vendorlogin(response.data));
                         navigate('/vendors')
                     }
                 }

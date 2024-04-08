@@ -65,6 +65,8 @@ const AdminCatogryList = ({ Categories, deleteCategory, render }) => {
             <hr className='bg-gray-600 m-1' />
             <div className='overflow-x-auto overflow-y-scroll h-[400px] customscrollbar'>
 
+                {Categories.length == 0 && <p className='p-2 bg-yellow-500 text-center'>no category added till now ...</p>}
+
                 {Categories.map((Category) => (
                     <div className='flex items-center  px-2 py-3  border-gray-300  border-b' key={Category?.id}>
                         <p className='text-sm w-6/12  '>{Category?.name}</p>

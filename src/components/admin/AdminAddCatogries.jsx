@@ -11,7 +11,7 @@ import { adminLogout } from '../../Reducer/adminAuthReducer'
 const AdminAddCatogries = () => {
 
     const [LoginError, setLoginError] = useState([]);
-    const [Categories, setCategories] = useState([]);
+    const [Categories, setCategories] = useState(null);
     const [NewCategories, setNewCategories] = useState('');
     const [effect, seteffect] = useState(false);
     const [inputData, setinputData] = useState('');
@@ -200,7 +200,7 @@ const AdminAddCatogries = () => {
 
                     </div>
                     <div className=' '>
-                        {Categories.length === 0 ? <div>
+                        {Categories == null ? <div>
                             <div className='mb-10'>
                                 <MorePartnersSkelton />
                             </div>
