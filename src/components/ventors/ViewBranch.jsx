@@ -22,46 +22,56 @@ const ViewBranch = () => {
     }, [effect])
 
     const handleEdit = async (offerId) => {
-        try {
-            const response = await get_api(vendor?.token).post(`/shop/notification/vendor/offer/update/`, { offer_id: offerId, new_offer: onEditData });
-            if (response.status === 201) {
-                setOnEdit('')
-                setonEditData('')
-                toast.success('successfully sent a request to update the offer.')
+        if (branchData?.is_active) {
+            try {
+                const response = await get_api(vendor?.token).post(`/shop/notification/vendor/offer/update/`, { offer_id: offerId, new_offer: onEditData });
+                if (response.status === 201) {
+                    setOnEdit('')
+                    setonEditData('')
+                    toast.success('successfully sent a request to update the offer.')
+                }
+            } catch (error) {
+                console.error('Fetching data failed:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
-        } catch (error) {
-            console.error('Fetching data failed:', error);
-            const errorMessages = getErrorMessage(error)
-            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
-            if (generalErrors.length >= 0) {
-                const newErrors = generalErrors.map(error => error.message);
-                newErrors.forEach(error => toast.error(error));
-                return newErrors;
-            }
-            else if (error.message) {
-                toast.error(`${error.message || 'Somthing went wrong'}`)
-            }
+        } else {
+            toast.error('This Branch is not acitive')
+            return
         }
     };
     const handleDelete = async (offerId) => {
-        try {
-            const response = await get_api(vendor?.token).post(`/shop/notification/vendor/offer/delete/`, { offer_id: offerId });
-            if (response.status === 201) {
-                seteffect(!effect)
-                toast.success('successfully sent a request to delete the offer.')
+        if (branchData?.is_active) {
+            try {
+                const response = await get_api(vendor?.token).post(`/shop/notification/vendor/offer/delete/`, { offer_id: offerId });
+                if (response.status === 201) {
+                    seteffect(!effect)
+                    toast.success('successfully sent a request to delete the offer.')
+                }
+            } catch (error) {
+                console.error('Fetching data failed:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
             }
-        } catch (error) {
-            console.error('Fetching data failed:', error);
-            const errorMessages = getErrorMessage(error)
-            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
-            if (generalErrors.length >= 0) {
-                const newErrors = generalErrors.map(error => error.message);
-                newErrors.forEach(error => toast.error(error));
-                return newErrors;
-            }
-            else if (error.message) {
-                toast.error(`${error.message || 'Somthing went wrong'}`)
-            }
+        } else {
+            toast.error('This Branch is not acitive')
+            return
         }
     };
     const fetchBranchdata = async () => {
@@ -221,7 +231,7 @@ const ViewBranch = () => {
                     <button className='bg-[#9F5080] text-white px-5 py-2 md:w-max w-full text-center rounded-md' onClick={() => setOpenModal(true)} >Add Offer</button>
                 </div>
             </div>
-            {openModal && <AddOfferModal onClose={onClose} branchData={branchData} seteffect={seteffect}  effect={effect} />}
+            {openModal && <AddOfferModal onClose={onClose} branchData={branchData} seteffect={seteffect} effect={effect} />}
             <Toaster />
         </div>
     )

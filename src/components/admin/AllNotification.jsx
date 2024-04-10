@@ -37,10 +37,29 @@ const AllNotification = () => {
     const AcceptNotification = async (notification) => {
         try {
             if (notification?.notification_type === 'DELETE_B') {
-                const response = await get_api(user?.token).delete(`/shop/vendor/branches/${notification?.Branch_id}/delete/`);
+                const response = await get_api(user?.token).delete(`/shop/vendor/branches/${notification?.id}/delete/`);
                 if (response.status === 204) {
                     seteffect(!effect)
                     toast.success('Approved')
+                }
+            } else if (notification?.notification_type === "UPDATE_O") {
+                const response = await get_api(user?.token).put(`/shop/notification/${notification?.id}/`);
+                if (response.status === 200) {
+                    seteffect(!effect)
+                    toast.success('Updated')
+                }
+            } else if (notification?.notification_type === "REGISTER_C") {
+                const response = await get_api(user?.token).post(`/shop/vendor/company/${notification?.register_id}/verify/`);
+                if (response.status === 201) {
+                    seteffect(!effect)
+                    toast.success('Approved ')
+                }
+            } else if (notification?.notification_type === "DELETE_O") {
+                const response = await get_api(user?.token).delete(`shop/notification/${notification?.id}/`);
+                console.log(response);
+                if (response.status === 204) {
+                    seteffect(!effect)
+                    toast.success('Approved ')
                 }
             }
         } catch (error) {
@@ -57,38 +76,46 @@ const AllNotification = () => {
             }
         }
     }
-    console.log(notifications);
 
     return (
         <div className=' py-2 customscrollbar overflow-scroll h-[450px]'>
-
-            {notifications.map((notification, index) =>
-            (
-                <div className='bg-[#f6edff] rounded-sm  py-2' key={notification?.id}>
-                    <div className='px-5'>
-                        <div><p className='text-xs'>{notification?.message}</p></div>
-                        <div className='py-2 flex gap-4'>
-                            <div><button className='bg-[#80509F] py-1 px-4 text-white text-xs rounded-sm' onClick={() => AcceptNotification(notification)}>Accept</button></div>
-                            <div><button className='bg-white py-1 px-4  text-xs rounded-sm'>Decline</button></div>
+            {notifications.map((notification, index) => (
+                notification?.approved ? (
+                    <div className='bg-white py-2' key={index}>
+                        <div className='px-5'>
+                            <p className='text-xs text-green-500'><span className='text-xs text-black font-medium'>{notification?.message}</span> approved</p>
+                            {/* <div className='py-2 flex gap-4'>
+                                <div><button className='bg-[#C31071] py-1 px-4 text-white text-xs rounded-sm'>Remove</button></div>
+                                <div><button className='bg-white py-1 px-4 text-xs rounded-sm'>Update</button></div>
+                            </div> */}
                         </div>
                     </div>
-                </div>
-            ))
-
-            }
-
-            {/* <div className='bg-white  py-2'>
-                <div className='px-5 '>
-                    <div><p className='text-xs'><span className='text-xs font-medium'>PartnerName</span> approved</p></div>
-                    <div className='py-2 flex gap-4'>
-                        <div><button className='bg-[#C31071] py-1 px-4 text-white text-xs rounded-sm'>Remove</button></div>
-                        <div><button className='bg-white py-1 px-4  text-xs rounded-sm'>Update</button></div>
-                    </div>
-                </div>
-            </div> */}
-
+                ) : notification?.notification_type === "UPDATE_O" ?
+                    (
+                        <div className='bg-[#f6edff] rounded-sm py-2' key={notification?.id}>
+                            <div className='px-5'>
+                                <p className='text-xs'>{notification?.message}</p>
+                                <div className='py-2 flex gap-4'>
+                                    <div><button className='bg-[#80509F] py-1 px-4 text-white text-xs rounded-sm' onClick={() => AcceptNotification(notification)}>Update</button></div>
+                                    <div><button className='bg-white py-1 px-4 text-xs rounded-sm'>Decline</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    ) :
+                    (
+                        <div className='bg-[#f6edff] rounded-sm py-2' key={notification?.id}>
+                            <div className='px-5'>
+                                <p className='text-xs'>{notification?.message}</p>
+                                <div className='py-2 flex gap-4'>
+                                    <div><button className='bg-[#80509F] py-1 px-4 text-white text-xs rounded-sm' onClick={() => AcceptNotification(notification)}>Accept</button></div>
+                                    <div><button className='bg-white py-1 px-4 text-xs rounded-sm'>Decline</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+            ))}
             <Toaster />
-        </div>
+        </div >
     )
 }
 

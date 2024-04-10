@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import CoustomInput from '../admin/CoustomInput';
+import { getErrorMessage } from '../../utils/Validation';
+import { get_api_form2 } from '../../utils/api';
 
 const VendorDeclaration = () => {
 
@@ -19,9 +21,26 @@ const VendorDeclaration = () => {
         setSecondCheckboxChecked(event.target.checked);
     };
 
-    const handleNextClick = () => {
+    const handleNextClick = async () => {
         if (firstCheckboxChecked && secondCheckboxChecked) {
-            Navigate(`/login`)
+            try {
+                const response = await get_api_form2().post(`/shop/notification/register/`, { register_id: id });
+                if (response.status === 201) {
+                    Navigate(`/login`)
+                }
+            } catch (error) {
+                console.error('Fetching data failed:', error);
+                const errorMessages = getErrorMessage(error)
+                const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+                if (generalErrors.length >= 0) {
+                    const newErrors = generalErrors.map(error => error.message);
+                    newErrors.forEach(error => toast.error(error));
+                    return newErrors;
+                }
+                else if (error.message) {
+                    toast.error(`${error.message || 'Somthing went wrong'}`)
+                }
+            }
         } else {
             toast(
                 "Kindly ensure that you have agreed to the terms and conditions before proceeding.",

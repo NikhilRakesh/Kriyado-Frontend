@@ -1,11 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const AdminHeadNavItem = ({ icon, text, to }) => {
+const AdminHeadNavItem = ({ icon, text, to, notificationCount, onClickFuntion }) => {
+  const handleNotificationClick = () => {
+    console.log('here');
+    if (notificationCount > 0) {
+      onClickFuntion();
+    }
+  };
+  
   return (
-    <Link to={to} className="flex flex-col items-center px-2 py-2 mt-2 md:mt-0 cursor-pointer">
-      <img src={icon} alt={text} className='w-4' />
-      <p className='text-[#9F5080] text-xs font-sans ml-2'>{text}</p>
+    <Link to={to} className="flex flex-col items-center px-2 py-2 mt-2 relative md:mt-0 cursor-pointer">
+      <img src={icon} alt={text} className='w-4 h-4' onClick={handleNotificationClick} />
+      <p className='text-[#9F5080] text-xs font-sans ml-2'  onClick={handleNotificationClick}>{text}</p>
+      {notificationCount > 0 && (
+        <span  onClick={handleNotificationClick} className="absolute top-0 right-6 bg-red-500 text-white rounded-full w-4 h-4 flex justify-center items-center text-xs"> {notificationCount} </span>
+      )}
     </Link>
   )
 }

@@ -44,7 +44,7 @@ const PartnersDeatails = ({ Data }) => {
                             <div className='flex justify-between items-center'>
                                 <div className='mt-3'>
                                     <Link to={`/MorePartners/${d.id}`}>
-                                        <button className='text-xs border rounded-full border-black px-5 py-1'>Details</button>
+                                        <button className='text-xs border rounded-full border-black px-5 py-1'>Exclusive Offers</button>
                                     </Link>
                                 </div>
                                 <div className='flex items-center'>

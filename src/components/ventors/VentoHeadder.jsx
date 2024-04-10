@@ -77,7 +77,7 @@ const VendorHeadder = () => {
                         <VendorHeadderNavItem icon='/dashboard1.png' text='DashBoard' to="/vendors" MenuClose={MenuClose} />
                         <VendorHeadderNavItem icon='/shopping-bag.png' text='Branch' to="/vendors/add-Branch" MenuClose={MenuClose} />
                         <VendorHeadderNavItem icon='/bar-chart.png' text='Ads' to='/vendors/Vendor-Ad' MenuClose={MenuClose} />
-                        <VendorHeadderNavItem icon='/bell (1).png' text='Ads' to='/vendors/Vendor-Notifications' MenuClose={MenuClose} NotoficationCount={NotoficationCount} />
+                        <VendorHeadderNavItem icon='/bell (1).png' text='Notification' to='/vendors/Vendor-Notifications' MenuClose={MenuClose} NotoficationCount={NotoficationCount} />
                     </div>
                     <div className='flex items-center ml-4 mt-4 md:mt-0 relative'>
                         <img src="/man.png" alt="profile" className='w-4' />

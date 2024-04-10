@@ -13,7 +13,6 @@ const VendorBranchList = ({ Branches }) => {
         setBranch(data);
         setopenModal(true)
     }
-
     return (
         <div className='overflow-x-scroll h-[550px] customscrollbar'>
             {Branches.map((branch, index) => (
