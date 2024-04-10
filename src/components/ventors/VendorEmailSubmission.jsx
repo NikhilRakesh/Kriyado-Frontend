@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { getErrorMessage } from '../../utils/Validation';
-import { get_api } from '../../utils/api';
+import { get_api, get_api_form2 } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import VendorSubmissionModal from '../admin/VendorSubmissionModal';
 
@@ -19,13 +19,13 @@ const VendorEmailSubmission = () => {
     const handleModalOpen = () => {
         fetchData()
     };
-    const fetchData = async () => {
+    const fetchData = async () => {  
         try {
-            const response = await get_api(user?.token).post(`/shop/vendor/company/${id}/verify/`);
+            const response = await get_api_form2().post(`/shop/vendor/company/${id}/verify/`);
             if (response.status === 201) {
                 setShowModal(true);
                 setTimeout(() => {
-                    Navigate('/admin-home/add-Parnter');
+                    Navigate('/');
                 }, 3000);
             }
         } catch (error) {
@@ -45,9 +45,9 @@ const VendorEmailSubmission = () => {
     return (
         <div className='mt-5  p-10'>
             <div className='flex justify-center '>
-                <img src="/email-removebg-preview.png" alt="" className='w-1/2' />
+                <img src="/email-removebg-preview.png" alt="" className='md:w-1/2' />
             </div>
-            <div className='flex justify-center m-5'>
+            <div className='md:flex justify-center m-5'>
                 <h1 className='text-2xl font-bold'>Verify your email address</h1>
             </div>
             <div className='flex justify-center m-5'>

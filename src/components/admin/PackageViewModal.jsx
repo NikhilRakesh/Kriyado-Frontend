@@ -155,7 +155,7 @@ const PackageViewModal = ({ packageData, onClose, reRender }) => {
                 <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <h2 className="text-2xl font-bold mb-4">View Package</h2>
-                        <div className="bg-white shadow-md border mb-5 rounded-lg overflow-hidden">
+                         <div className="bg-white shadow-md border mb-5 rounded-lg overflow-hidden">
                             <div className="px-6 py-4">
                                 <h3 className="text-lg font-semibold mb-2">Package Details</h3>
                                 <div className="grid grid-cols-2 gap-4">

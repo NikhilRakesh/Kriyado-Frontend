@@ -27,7 +27,6 @@ const VendorHeadder = () => {
     const fetchNotificationCount = async () => {
         try {
             const response = await get_api(vendor?.token).get('/shop/notification/count/vendor/');
-            console.log(response);
             if (response.status === 200) {
                 setNotoficationCount(response.data)
             }

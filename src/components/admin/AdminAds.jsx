@@ -13,6 +13,11 @@ const AdminAds = () => {
     const [states] = useState(getStates());
     const [effect, setEffect] = useState(false)
     const [advertisements, setadvertisements] = useState([])
+    const [model , setModal] = useState({
+        "is_modal" : false,
+        "url":"",
+        "link":""
+    })
     const [formData, setFormData] = useState({
         image: '',
         url: '',
@@ -215,7 +220,7 @@ const AdminAds = () => {
                         </div>
                         <div className='flex flex-col gap-2 m-2 pb-4'>
                             <p className='text-xs text-gray-400'>Select State</p>
-                            <Dropdown text="Choose State" p='3' font="font-normal" textcolor="text-gray-400" data={states} onUpdate={updateState} />
+                            <Dropdown text="Choose State" p='3' font="font-normal" textcolor="text-gray-400" data={["Kerela"]} onUpdate={updateState} />
                         </div>
                         <div className='flex flex-col gap-2 m-2'>
                             <p className='text-xs text-gray-400'>Select Country</p>
@@ -227,10 +232,25 @@ const AdminAds = () => {
                         </div>
                     </div>
                     <div className='flex justify-center my-5 '>
-                        <button className='bg-[#80509F] px-8 rounded-md text-white py-1' onClick={() => PostAdd()}>Post</button>
+                        <button className='bg-[#80509F] px-8 rounded-md text-white py-1' onClick={() => PostAdd()}>Create</button>
                     </div>
                 </div>
-                <div className='w-9/12 border m-2 p-2  border-gray-300   rounded-sm'>
+                <div className='w-9/12 border m-2 p-2  border-gray-300   rounded-sm relative'>
+
+                    
+
+                    {model.is_modal && 
+                    
+                    <div className='absolute inset-0 bg-gray-400 bg-opacity-90  max-h-[600px] overflow-y-scroll p-10 custom-scroll'>
+                        <div className="flex justify-between items-center">
+                            <p className='bg-white p-2 rounded'>Link : {model.link}</p>
+
+                            <button className='bg-[#9F5080] text-white px-5 py-2 text-sm rounded-md float-end m-5' onClick={()=>setModal({is_modal:false,url:"",link:""})}>CLOSE</button>
+                        </div>
+                        <img src={model.url} alt="zoom image" className='w-full '/>
+
+                    </div>
+                    }
                     <div className='border border-gray-300  shadow-md rounded-lg'>
                         <div className='hidden md:block'>
                             <div className='p-4 flex  '>
@@ -254,8 +274,8 @@ const AdminAds = () => {
                             ) : (
                                 advertisements.map((add, index) => (
                                     <div className='p-4 md:flex' key={index}>
-                                        <div className='md:w-2/12'><img className='md:w-10' src="/WhatsApp Image 2024-02-05 at 17.25.25_63afbb9d.jpg" alt="" /></div>
-                                        <div className='md:w-2/12 flex items-center'> <p className='text-xs truncate'>{add?.url}</p></div>
+                                        <div className='md:w-2/12'><img className='md:w-10 h-[50px] object-cover' src={add.image} alt="advertisement" onClick={()=> setModal({is_modal:true , url:add.image , link:add.url})} /></div>
+                                        <div className='md:w-2/12 flex items-center'> <p className='text-xs truncate pe-5'>{add?.url}</p></div>
                                         <div className='md:w-2/12 flex items-center'> <p className='text-xs'>{add?.district}</p></div>
                                         <div className='md:w-2/12 flex items-center'> <p className='text-xs'>{add?.state}</p></div>
                                         <div className='md:w-2/12 flex items-center'> <p className='text-xs'>{add?.country}</p></div>
@@ -263,8 +283,8 @@ const AdminAds = () => {
                                             {/* <div className=' border-gray-300 p-1 px-4 border-r'>
                     <img src="/edit.png" alt="" className='w-5' />
                 </div> */}
-                                            <div className='p-1 px-4 cursor-pointer flex justify-center'>
-                                                <img src="/delete (3).png" alt="" onClick={() => DeleteAdd(add?.id)} className='w-5' />
+                                            <div className='p-1 px-4 cursor-pointer flex justify-center items-center'>
+                                                <img src="/delete (3).png" alt="" onClick={() => DeleteAdd(add?.id)} className='w-5 h-5' />
                                             </div>
                                         </div>
                                     </div>

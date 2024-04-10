@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import BranchDetailModal from './BranchDetailModal'
 import { data } from 'autoprefixer'
 
@@ -8,7 +8,7 @@ const VendorBranchList = ({ Branches }) => {
     const [openModal, setopenModal] = useState(false)
     const [branch, setBranch] = useState({})
     const onClose = () => setopenModal(false)
-
+    const navigate = useNavigate()
     const OpenModalWithData = (data) => {
         setBranch(data);
         setopenModal(true)
@@ -43,7 +43,7 @@ const VendorBranchList = ({ Branches }) => {
                         <p className='text-xs'>{branch?.State}</p>
                     </div>
                     <div className='flex justify-end'>
-                        <button className='text-sm text-gray-500 border border-gray-400 rounded-full px-3 ' onClick={() => OpenModalWithData(branch)}>Details</button>
+                        <button className='text-sm text-gray-500 border border-gray-400 rounded-full px-3 ' onClick={() => navigate(`/vendors/View-Branch/${branch.id}`)}>Details</button>
                     </div>
                 </div>
             ))}

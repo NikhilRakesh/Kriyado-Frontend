@@ -6,13 +6,13 @@ import { get_api, get_api_form2, get_api_form_register } from '../../utils/api';
 import { useSelector } from 'react-redux';
 import DiscountEntrySkelton from '../ResuableComponents/DiscountEntrySkelton';
 
-const VendorDiscountEntry = () => {
+const InnerDiscountEntryVendor = () => {
 
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [branchData, setBranchData] = useState([]);
     const [DiscountsData, setDiscountsData] = useState([])
-    const user = useSelector(state => state.adminAuth.adminUser)
+    const user = useSelector(state => state.vendorAuth.vendor)
     const { id } = useParams();
     const navigate = useNavigate()
     const [branch, setbranch] = useState({
@@ -40,30 +40,13 @@ const VendorDiscountEntry = () => {
     }
     )
 
-
     useEffect(() => {
-        fetchBranchData()
+        setBranchData([{
+            Locality:'',
+            id:id
+        }])
     }, [])
 
-    const fetchBranchData = async () => {
-        try {
-            const response = await get_api_form_register().get(`/shop/vendor/company/${id}/branches/`);
-            if (response.status === 200) {
-                setBranchData(response.data);
-            }
-        } catch (error) {
-            console.log(error);
-            const errorMessages = getErrorMessage(error)
-            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
-            if (generalErrors.length >= 0) {
-                const newErrors = generalErrors.map(error => error.message);
-                newErrors.forEach(error => toast.error(error));
-            }
-            else if (error.message) {
-                toast.error(`${error.message || 'Somthing went wrong'}`)
-            }
-        }
-    }
 
     const handleValue = (discountKey, fieldKey, value) => {
         setbranch(prevState => ({
@@ -142,12 +125,12 @@ const VendorDiscountEntry = () => {
         }
         else {
             try {
-                const response = await get_api_form2().post(`/shop/branches/offers/create/`, [
+                const response = await get_api(user?.token).post(`/shop/branches/offers/create/`, [
                     ...DiscountsData,
                     ...filteredBranches
                 ]);
                 if (response.status === 201) {
-                    navigate(`/Vendor-register/Vendor-Declaration/${id}`)
+                    navigate(`/vendors/add-Branch`)
                 }
             } catch (error) {
                 console.log(error);
@@ -260,4 +243,4 @@ const VendorDiscountEntry = () => {
         )
 }
 
-export default VendorDiscountEntry
+export default InnerDiscountEntryVendor

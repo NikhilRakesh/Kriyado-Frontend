@@ -57,6 +57,7 @@ const AllNotification = () => {
             }
         }
     }
+    console.log(notifications);
 
     return (
         <div className=' py-2 customscrollbar overflow-scroll h-[450px]'>

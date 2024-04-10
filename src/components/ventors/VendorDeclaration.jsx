@@ -21,7 +21,7 @@ const VendorDeclaration = () => {
 
     const handleNextClick = () => {
         if (firstCheckboxChecked && secondCheckboxChecked) {
-            Navigate(`/vendors/add-Branch/Vendor-EmailSubmission/${id}`)
+            Navigate(`/login`)
         } else {
             toast(
                 "Kindly ensure that you have agreed to the terms and conditions before proceeding.",
@@ -34,7 +34,7 @@ const VendorDeclaration = () => {
     return (
         <div className='mt-5 mb-4 '>
             <h1 className='font-bold'>DeclarationConfirmation</h1>
-            <div className='border h-[800px] my-5 border-gray-300 p-3 rounded-lg shadow-sm bg-white'>
+            <div className='border md:h-[800px] my-5 border-gray-300 p-3 rounded-lg shadow-sm bg-white'>
 
                 <ul >
                     <li >

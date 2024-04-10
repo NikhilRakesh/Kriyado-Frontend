@@ -84,9 +84,10 @@ const AddBranchForm = () => {
         }
         try {
             const response = await get_api_form(user?.token).post('/shop/vendor/branches/create/', formData2);
+            console.log(response);
             if (response.status === 201) {
                 toast.success('Branch added successfuly')
-                navigate(`/vendors/add-Branch/Discount-Entry/${user.company_id}`);
+                navigate(`/vendors/add-Branch/Discount-Entry/${response.data.id}`);
             }
         } catch (error) {
             console.log(error);

@@ -41,7 +41,11 @@ import UserRegiterationPage from './components/users/UserRegiterationPage'
 import UserPartners from './components/users/UserPartners'
 import VendorNotifications from './components/ventors/VendorNotifications'
 import DiscountEntry1 from './components/admin/DiscountEntry1'
-
+import ViewBranch from './components/ventors/ViewBranch'
+import Account_Verify from './components/users/Account_verify'
+import Forgot_Page from './components/users/Forgot_Page'
+import Reset_Password from './components/users/Reset_Password'
+import InnerDiscountEntryVendor from './components/ventors/InnerDiscountEntryVendor'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -57,6 +61,9 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/verify_account" element={<Account_Verify />} />
+        <Route path="/forgot" element={<Forgot_Page />} />
+        <Route path="/reset_password" element={<Reset_Password />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/user-register" element={<UserRegiterationPage />} />
         <Route path="/admin-home" element={isAdminAuthenticated && adminUser?.type === 'admin' ? (<AdminHome />) : (<Navigate to="/login" replace />)}>
@@ -86,12 +93,12 @@ function App() {
           <Route path="Pricing" element={<Pricing />} />
         </Route>
         <Route path="/login" element={<UserLogin />} />
-        {/* <Route path="/Vendor-register" element={<VendorRegister />} >
+        <Route path="/Vendor-register" element={<VendorRegister />} >
           <Route path="" element={<VendorRegisterationForm />} />
-          <Route path="Discount-Entry" element={<VendorDiscountEntry />} />
-          <Route path="Vendor-Declaration" element={<VendorDeclaration />} />
-          <Route path="Vendor-EmailSubmission" element={<VendorEmailSubmission />} />
-        </Route> */}
+          <Route path="Discount-Entry/:id" element={<VendorDiscountEntry />} />
+          <Route path="Vendor-Declaration/:id" element={<VendorDeclaration />} />
+          <Route path="Vendor-EmailSubmission/:id" element={<VendorEmailSubmission />} />
+        </Route>
         <Route path="/vendors" element={isVendorAuthenticated && vendor?.type === 'vendor' ? (<Ventors />) : (<Navigate to="/login" replace />)}>
           <Route path="" element={<VentorProfile />} >
             <Route path="" element={<VendorProfileRight />} />
@@ -100,8 +107,10 @@ function App() {
           </Route>
           <Route path="add-Branch" element={<AddBranch />} >
             <Route path="" element={<AddBranchForm />} />
-            <Route path="Discount-Entry/:id" element={<VendorDiscountEntry />} />
+            <Route path="Discount-Entry/:id" element={<InnerDiscountEntryVendor />} />
             <Route path="Ventor-BranchDetails" element={<VentorBranchDetails />} />
+          </Route>
+          <Route path="View-Branch/:id" element={<ViewBranch />} >
           </Route>
         </Route>
       </Routes>

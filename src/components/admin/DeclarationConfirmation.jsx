@@ -78,8 +78,8 @@ const DeclarationConfirmation = () => {
       </div>
 
       <div className='bg-white p-5 rounded-lg border shadow-sm'>
-        <div className='flex gap-6'>
-          <div className='w-6/12'>
+        <div className='md:flex gap-6'>
+          <div className='md:w-6/12'>
             <CoustomInput headder='Name' Placeholder='Enter' />
           </div>
           <div className='w-6/12'>

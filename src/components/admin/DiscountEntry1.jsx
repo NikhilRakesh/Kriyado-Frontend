@@ -105,13 +105,7 @@ const DiscountEntry1 = () => {
             return
         }
 
-        setDiscountsData(
-
-            [
-                ...DiscountsData,
-                ...filteredBranches
-            ]
-        )
+        
 
         if (currentIndex < branchData.length-1){
             setbranch({
@@ -139,12 +133,21 @@ const DiscountEntry1 = () => {
             })
 
             setCurrentIndex(currentIndex+1)
+            setDiscountsData(
+
+                [
+                    ...DiscountsData,
+                    ...filteredBranches
+                ]
+            )
 
         }
         else{
-
             try {
-                const response = await get_api(user?.token).post(`/shop/branches/offers/create/`, DiscountsData);
+                const response = await get_api(user?.token).post(`/shop/branches/offers/create/`, [
+                    ...DiscountsData,
+                    ...filteredBranches
+                ]);
                 if (response.status === 201) {
                     navigate(`/admin-home/add-Parnter/Declaration-Confirmation/${id}`)
                 }

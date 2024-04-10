@@ -28,7 +28,16 @@ export const get_api_form = (token = null) => {
     baseURL: 'http://192.168.1.6:8000/api',
     headers: {
       'Content-Type': 'multipart/form-data',
-      "Authorization": `Token ${token ? token : null}`    
+      "Authorization": `Token ${token ? token : null}`
+    }
+  })
+}
+export const get_api_form2 = () => {
+
+  return axios.create({
+    baseURL: 'http://192.168.1.6:8000/api',
+    headers: {
+      'Content-Type': 'application/json',
     }
   })
 }

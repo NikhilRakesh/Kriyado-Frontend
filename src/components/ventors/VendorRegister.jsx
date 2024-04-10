@@ -10,32 +10,21 @@ const VendorRegister = () => {
 
     const addImage = useRef(null);
 
-    const handleSubmitForForm = (event) => {
-        event.preventDefault();
-        if (imageError) {
-            return;
-        }
-        console.log(formData);
-    }
 
     return (
         <div
-            className="bg-cover bg-center w-full h-screen md:flex fixed  "
+            className="bg-cover bg-center w-full h-screen md:flex overflow-hidden fixed "
             style={{ backgroundImage: `url(${backgroundImage})` }}
         >
-            <div className='w-full md:w-4/12 '>
-            </div>
-            <div className=' w-full md:w-8/12 flex flex-col justify-center  items-center h-full md:gap-5 md:flex-row  '>
-                <div className='w-3/12'>
-                    <img src="/Kriyado Black Logo.png" alt="" />
+            <div className=' w-full  flex flex-col justify-center  items-center h-full md:flex-row  '>
+                <div className='md:w-8/12  py-5 md:py-0 md:h-full flex items-center justify-center'>
+                    <img src="/Kriyado Black Logo.png" className='w-3/12 ' alt="" />
                 </div>
-                <div className='md:w-[500px] md:pl-5 md:ml-20'>
-                    <form onSubmit={handleSubmitForForm} className='overflow-scroll rounded-md customscrollbar  py-4 shadow-lg bg-gray-50 ' >
-                        <div className='flex justify-center items-center'>
-                            <h1 className='font-bold text-2xl font-sans '>Vendor Register</h1>
-                        </div>
-                        <Outlet />
-                    </form>
+                <div className=' w-10/12 md:w-max mx-5 p-5 overflow-y-scroll h-full   customscrollbar bg-white   '>
+                    <div className='flex justify-center items-center'>
+                        <h1 className='font-bold text-2xl font-sans '>Vendor Register</h1>
+                    </div>
+                    <Outlet />
                 </div>
             </div>
         </div>
