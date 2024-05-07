@@ -1,7 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Graph from './Graph'
+import { getErrorMessage } from '../../utils/Validation';
+import toast, { Toaster } from 'react-hot-toast';
+import { get_api } from '../../utils/api';
+import { useSelector } from 'react-redux';
 
 const AdminGraph = () => {
+
+    const [analytics, setAnalytics] = useState({})
+    const user = useSelector(state => state.adminAuth.adminUser)
+
+    useEffect(() => {
+        fetchCustomerAnalytics()
+    }, [])
+
+    const basicUtilities = analytics?.packageCounts.find(item => item.type === 'BASIC' && item.name === 'Kriyado Utilities');
+
+    const fetchCustomerAnalytics = async () => {
+        try {
+            const response = await get_api(user?.token).get('/shop/analytics/customer/');
+            if (response.status === 200) {
+                setAnalytics(response.data)
+            }
+        } catch (error) {
+            console.error('Fetching data failed:', error);
+            const errorMessages = getErrorMessage(error)
+            const generalErrors = errorMessages.filter((error) => error.field === 'general' || error.field === error.field || error.field === 'name');
+            if (generalErrors.length >= 0) {
+                const newErrors = generalErrors.map(error => error.message);
+                newErrors.forEach(error => toast.error(error));
+                return newErrors;
+            }
+            else if (error.message) {
+                toast.error(`${error.message || 'Somthing went wrong'}`)
+            }
+        }
+    }
+    console.log('analytics', basicUtilities);
     return (
         <div className=' m-6 p-4 bg-gray-50 rounded-lg shadow-lg'>
             <h1 className='font-bold'>DashBoard</h1>
@@ -71,7 +106,7 @@ const AdminGraph = () => {
                     <div className='bg-white  p-3 rounded-md'>
                         <p className='text-gray-400 text-sm '>Total Coustomers</p>
                         <div className='py-2 font-medium'>
-                            <p>4,845</p>
+                            <p>{analytics?.total_customers}</p>
                             <div className='flex justify-between '>
                                 <div className='bg-gray-100 w-3/12 p-3 rounded-sm'>
                                     <div className='flex  gap-3'>
@@ -104,7 +139,7 @@ const AdminGraph = () => {
                         </div>
 
                         <div className='p-2 flex justify-start items-center mt-2'>
-                            <p className='text-xs'><span className='text-green-500'>12.5%</span> Up From Yesterday</p>
+                            <p className='text-xs'><span className='text-green-500'>{analytics?.sales_percentage}%</span> Up From Yesterday</p>
                         </div>
                     </div>
 
@@ -145,16 +180,17 @@ const AdminGraph = () => {
                         </div>
 
                         <div className='p-2 flex justify-start items-center mt-2'>
-                            <p className='text-xs'><span className='text-green-500'>12.5%</span> Up From Yesterday</p>
+                            <p className='text-xs'><span className='text-green-500'>{analytics?.sales_percentage}%</span> Up From Yesterday</p>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div className='bg-white mt-5 p-3'>
+            {/* <div className='bg-white mt-5 p-3'>
                 <p className='font-medium text-sm'>Sales Details</p>
                 <Graph />
-            </div>
+            </div> */}
+            <Toaster />
         </div>
     )
 }

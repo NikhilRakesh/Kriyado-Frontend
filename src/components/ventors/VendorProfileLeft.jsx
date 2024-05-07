@@ -99,7 +99,7 @@ const VendorProfileLeft = ({ setImageSrc }) => {
                     </div>
                 </div> */}
 
-                <div className='border border-gray-300 p-5  shadow-sm mx-5'>
+                {/* <div className='border border-gray-300 p-5  shadow-sm mx-5'>
                     <div className='p-1 pb-0'>
                         <p className='text-[10px]'>Legal</p>
                     </div>
@@ -115,7 +115,7 @@ const VendorProfileLeft = ({ setImageSrc }) => {
                             <p className='text-[10px] font-bold'>View</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className='border border-gray-300 mx-5 my-5 '>
                     <img className='pb-5 rounded-md' src="https://imgs.search.brave.com/RBtQypA79kWPy5kCvpWCEMsXtfFAaFYHr_quDnrsR_I/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9sb2dv/LmNvbS9pbWFnZS1j/ZG4vaW1hZ2VzL2t0/czkyOHBkL3Byb2R1/Y3Rpb24vOGU5OWEw/ODlkYjcyZDYyNjVl/MWRhM2ViNDJiZDJj/NGVjY2E1NThhYi05/MjB4NjAwLnBuZz93/PTEwODAmcT03Mg" alt="" />

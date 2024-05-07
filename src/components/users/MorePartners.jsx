@@ -56,7 +56,14 @@ const MorePartners = () => {
                 </div>
             </div>
             <div className='bg-white rounded-lg m-6 p-6 shadow-lg md:flex  gap-3'>
-                <div className='md:w-10/12 '>
+
+                <div className='md:w-4/12 mt-11  order-1'>
+                    {branchDetails && <ServiceProvider branchDetails={branchDetails} />}
+                    {/* <div className='  rounded-sm'>
+                        <img src="/ad-area@2x.png" alt="" />
+                    </div> */}
+                </div>
+                <div className='md:w-10/12 md: '>
 
                     <div className='flex items-center'>
                         <div className='w-5/12 hidden  sm:block'>
@@ -68,12 +75,6 @@ const MorePartners = () => {
                         <MorePartnersDetails branchDetails={branchDetails} />
                     </div>
 
-                </div>
-                <div className='md:w-4/12 mt-11 '>
-                    {branchDetails && <ServiceProvider branchDetails={branchDetails} />}
-                    {/* <div className='  rounded-sm'>
-                        <img src="/ad-area@2x.png" alt="" />
-                    </div> */}
                 </div>
             </div>
             <Toaster />

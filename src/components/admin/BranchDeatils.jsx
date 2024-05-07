@@ -411,7 +411,7 @@ const BranchDeatils = () => {
                     <div className='w-6/12 '>
                        
                         <div className='flex  mt-4'>
-                            <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more</button>
+                            <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={addMore}>Add more branch</button>
                             <button type='submit' className='py-1 px-2 mx-4 bg-[#80509F] rounded-lg text-white w-3/6 '>Next</button>
                             <button type='button' className='py-1  px-2 mx-4 bg-[#9F5080] rounded-lg text-white w-3/6 ' onClick={Skip}>Skip</button>
                         </div>

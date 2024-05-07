@@ -87,6 +87,14 @@ const UserLogin = () => {
         }
     }
 
+    const onFogot = () => {
+        navigate('/forgot')
+    }
+
+    const onSigup = () => {
+        navigate('/user-register')
+    }
+
     return (
         <div
             className="bg-cover bg-center w-full h-screen md:flex fixed"
@@ -103,7 +111,7 @@ const UserLogin = () => {
                         <h1 className='font-bold text-2xl font-sans p-2 '>Login</h1>
                     </div>
                     <form onSubmit={handleSubmit} >
-                        <div className='bg-gray-100 rounded-lg  md:py-10'>
+                        <div className='bg-gray-100 rounded-lg  md:py-10 py-5'>
                             {LoginError && (
                                 <div className='flex justify-center  ml-2  '>
                                     {LoginError.map((error, index) => (
@@ -137,30 +145,30 @@ const UserLogin = () => {
                             <div className='pl-2'>
                                 {passwordError && <p className='text-red-500 text-xs font-medium'>{passwordError}</p>}
                             </div>
-                            <div className='flex justify-end items-center '>
-                                <p className='font-bold text-xs  m-1'>Forgot your password?</p>
+                            <div className='flex justify-end items-center cursor-pointer'>
+                                <p className='font-bold text-xs  m-1' onClick={onFogot}>Forgot your password?</p>
                                 <img className='w-6 h-5' src="/arrow.png" alt="" />
                             </div>
                             <div className='flex justify-center m-4'>
-                                <button className='text-white bg-[#80509F] w-full rounded-full p-2 border text-xs shadow-xl'>LOGIN</button>
+                                <button className='text-white bg-[#80509F] outline-[#513166] w-full rounded-full p-2 border text-xs shadow-xl'>LOGIN</button>
                             </div>
                             <div className='flex justify-center items-center m-2 mt-10 p-1'>
-                                <p className='text-xs font-bold'>Or login with social accounts</p>
+                                <p className='text-xs font-bold'>Doesn't have a account yet? <span className='text-[#80509F] cursor-pointer' onClick={onSigup}>Sign Up</span></p>
                             </div>
-                            <div className='flex justify-center items-center m-2 p-1'>
+                            {/* <div className='flex justify-center items-center m-2 p-1'>
                                 <div className='flex justify-between w-6/12'>
                                     <div className='bg-white p-2 px-4 rounded-lg '>
                                         <img className='w-4' src="/google (1).png" alt="" />
                                     </div>
                                     <div className='bg-white p-2 px-4 rounded-lg '>
                                         <img className='w-4' src="/facebook.png" alt="" />
-                                    </div>
+                                    </div>    
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </form>
                 </div>
-            </div>
+            </div>   
             <Toaster />
             {opemodal && <VerificationModal close={closeModal} verifyApi={verifyApi} />}
         </div>

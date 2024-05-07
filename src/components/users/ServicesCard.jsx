@@ -4,7 +4,7 @@ const ServicesCard = ({ branchDetails }) => {
     return (
         <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
             <div className="p-6">
-                <h2 className="text-xl font-medium mb-4">Terms And Services</h2>
+                <h2 className="text-xl font-medium mb-4 text-[#5f1c7c]">Exclusive discount for you</h2>
                 <div className="flex justify-center bg-gray-50 border py-2 px-4 rounded-md mb-4">
                     <p className="text-sm text-gray-600">Facility/Services Offered</p>
                     {/* <p className="text-sm text-gray-600">Max. Discount Permissible [%]</p> */}

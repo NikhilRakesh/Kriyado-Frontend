@@ -160,8 +160,8 @@ const UserPartners = () => {
                         <div className='w-5/12 hidden  sm:block'>
                             <h1 className='font-bold'>Partners</h1>
                         </div>
-                        <div className='md:w-7/12 border flex'>
-                            <input type="text" value={Value} onFocus={() => setinputFocous(true)} onChange={handleSearchChange} className='border w-6/12 md:px-3 border-gray-200 outline-0 bg-gray-50 text-sm' placeholder='Search' />
+                        <div className='md:w-7/12 border flex rounded overflow-hidden'>
+                            <input type="text" value={Value} onFocus={() => setinputFocous(true)} onChange={handleSearchChange} className='border w-6/12 md:px-3 border-gray-200 outline-0 bg-gray-50 text-sm placeholder-black' placeholder='Search' />
                             <Dropdown data={categories} p='2' onUpdate={setseletedCategories} text='Category' bg='bg-gray-50' textcolor='text-black' font='font-medium' textsize='text-sm' />
                             <div className='bg-[#80509F] flex justify-center items-center px-3' onClick={searchFilter}>
                                 <img src="/search-interface-symbol (1).png" alt="" className='w-8 ' />

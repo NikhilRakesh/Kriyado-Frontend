@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import UserProfileModal from './UserProfileModal'
-
+import './Button.css'
+import { useNavigate } from 'react-router-dom'
 const UserProfileDetails = ({ data, onOpen }) => {
 
     const [PurchaseDate, setPurchaseDate] = useState('')
     const [DateOfBirth, setDateOfBirth] = useState('')
     const [ExpiryDate, setExpiryDate] = useState('')
+    const [isProfileOpen, setisProfileOpen] = useState(false);
 
+    const navigate = useNavigate()
+
+    const profileClose = () => {
+        setisProfileOpen(false)
+    }
 
     useEffect(() => {
         const packageData = data?.package_c.find(pkg => pkg.is_active === true);
@@ -23,22 +30,47 @@ const UserProfileDetails = ({ data, onOpen }) => {
     }, [data])
 
     return (
-        <div className='md:flex '>
-            <div className='m-2 p-2 w-full md:w-8/12 '>
-                <div className='md:flex  mb-5 justify-between'>
-                    <div className='md:px-2 w-5/12 ' >
-                        <h1 className='font-bold text-black sm:p-1 '>My Profile</h1>
+        <div className='md:flex  justify-center'>
+            <div className=' p-2 w-full md:w-8/12 '>
+                <div className='md:flex  mb-5 justify-between divbody rounded-lg'>
+                    <div className='p-3 md:w-5/12 ' >
+                        {/* <h1 className='font-bold text-black sm:p-1 '>My Profile</h1>
                         <p className='text-[10px] font-sans sm:p-1'>Customer ID</p>
-                        <p className='text-xs font-sans  font-thin sm:p-1'><span>CID </span>{data?.customer_id}</p>
-                    </div>
-                    <div className='md:border border-gray-300 md:shadow-sm rounded-sm md:flex md:p-2 md:w-6/12 justify-between items-center sm:p-1'>
-                        <div className=''>
-                            <p className='text-[10px] '>Purchase Date</p>
-                            <p>{PurchaseDate}</p>
+                        <p className='text-xs font-sans  font-thin sm:p-1'><span>KID </span>{data?.customer_id}</p> */}
+                        <div className="profilediv w-full  shadow-md rounded-lg overflow-hidden">
+                            <div className="px-4 py-6">
+                                <img
+                                    className="w-24 h-24 mx-auto rounded-full"
+                                    src="/man.png"
+                                    alt="User Profile"
+                                />
+                                <div className="text-center mt-4">
+                                    <h2 className="text-lg font-bold text-white">{data?.name}</h2>
+                                    <p className="text-sm text-gray-100">Customer ID: <span>{data?.customer_id}</span></p>
+                                </div>
+                                <div className=" flex justify-center  pt-3">
+                                    <button onClick={() => setisProfileOpen(true)} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p className='text-[10px]'>Expiry Date</p>
-                            <p>{ExpiryDate}</p>
+                    </div>
+                    <div className="mt-5 md:mt-0   border-gray-300 md:shadow-sm rounded-md text-white md:w-6/12 ">
+                        <div className='flex justify-between items-center p-2 py-10'>
+                            <div className="">
+                                <p className="text-xs ">Purchase Date</p>
+                                <p className="text-sm font-semibold">{PurchaseDate}</p>
+                            </div>
+                            <div className="">
+                                <p className="text-xs ">Expiry Date</p>
+                                <p className="text-sm font-semibold">{ExpiryDate}</p>
+                            </div>
+                        </div>
+                        <div className="container">
+                            {/* <div className="btn"><a href="#">Read more 1</a></div>
+                            <div className="btn"><a href="#">Read more 3</a></div> */}
+                            <div className="btn " onClick={() => navigate('/Partners')}><a href="#">Find Partners</a></div>
                         </div>
                     </div>
                 </div>
@@ -139,6 +171,7 @@ const UserProfileDetails = ({ data, onOpen }) => {
                     <img src="/ad-area@2x.png" alt="" />
                 </div>
             </div>
+            {isProfileOpen && <UserProfileModal data={data} close={profileClose} />}
         </div>
     )
 }

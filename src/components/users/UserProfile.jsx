@@ -9,6 +9,7 @@ import { checkDate, getErrorMessage } from '../../utils/Validation';
 import ExpiryModal from './ExpiryModal';
 import toast, { Toaster } from 'react-hot-toast';
 import ProfileImageModal from './ProfileImageModal';
+import UsersCard from './UsersCard';
 
 const UserProfile = () => {
 
@@ -89,13 +90,14 @@ const UserProfile = () => {
             <SkeltonLoading />
             {packageExpired && <ExpiryModal />}
         </div>
-        : ( 
+        : (
             <div>
-                <div className='md:absolute md:top-0 md:right-0 md:mt-28 '>
+                <div className='md:absolute md:top-0 md:right-14 md:mt-28 mx-6'>
                     <div className='relative'>
-                        <img src="/card.svg" className='md:w-4/5' alt="" />
-                        <p className='absolute top-3/4 left-9 mb-1 text-xs text-white '>{Data?.name}</p>
-                        <p className='absolute top-3/4 left-44 mb-1 text-xs text-white '>{formateddata}</p>
+                        {/* <img src="/card.svg" className='md:w-4/5' alt="" /> */}
+                        {/* <p className='absolute top-3/4 left-9 mb-1 text-xs text-white '>{Data?.name}</p>
+                        <p className='absolute top-3/4 left-44 mb-1 text-xs text-white '>{formateddata}</p> */}
+                        <UsersCard data={Data} formateddata={formateddata} />
                     </div>
                 </div>
                 <div className='bg-gray-50 rounded-lg m-6 p-2 shadow-lg'>

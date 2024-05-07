@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PartnersRegistration from '../admin/PartnersRegistration'
 import VendorBranchList from './VentorBranchList'
 import VentorResgistration from './VentorResgistration'
@@ -37,11 +37,22 @@ const AddBranch = () => {
             }
         }
     }
+    const secondDivRef = useRef(null);
+
+    const scrollToSecondDiv = () => {
+        const { top } = secondDivRef.current.getBoundingClientRect();
+
+        window.scrollTo({
+            top: window.scrollY + top,
+            behavior: 'smooth'
+        });
+    };
 
     return (
         <div className=' m-6 p-2 bg-gray-50 rounded-lg shadow-lg '>
             <div className='flex items-center justify-between'>
                 <h1 className='font-bold p-3 m-2'>Add Branch</h1>
+                <button className='px-5 py-1 rounded-md bg-[#9F5080] text-white' onClick={scrollToSecondDiv}>Add</button>
             </div>
 
             <div className='border border-gray-50  md:flex justify-between'>
@@ -84,7 +95,7 @@ const AddBranch = () => {
                     <VendorBranchList Branches={Branches} />
                 </div>
 
-                <div className='md:w-9/12 border m-2 p-2  border-gray-300   rounded-sm'>
+                <div ref={secondDivRef} className=' md:w-9/12 border m-2 p-2  border-gray-300   rounded-sm'>
 
                     <div className=' '>
                         <div className='m-2 p-2'>
@@ -92,7 +103,7 @@ const AddBranch = () => {
                         </div>
 
                     </div>
-                    <div className=' '>
+                    <div className=''>
                         <VentorResgistration />
                     </div>
                 </div>

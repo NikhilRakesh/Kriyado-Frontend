@@ -106,7 +106,7 @@ const UserHeadder = () => {
 
     return (
         <div className='bg-white shadow-lg m-6 rounded-lg'>
-            <div className='container mx-auto px-4 py-2 md:flex md:justify-between md:items-center'>
+            <div className=' mx-auto px-4 py-2 md:flex justify-between items-center'>
                 <div className='flex justify-between items-center'>
                     <img src="/Kriyado Black Logo.png" alt="" className="w-32" />
                     <button
